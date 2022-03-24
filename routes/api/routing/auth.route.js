@@ -4,7 +4,7 @@ import AuthCtrl from "../controllers/auth.controller.js";
 
 const router = Router();
 
-// @route  POST api/auth
+// @route  POST api/v1/auth
 // @desc   Authenticate user & get token
 // @access Public
 

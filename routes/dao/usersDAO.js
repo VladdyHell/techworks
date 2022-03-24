@@ -1,4 +1,4 @@
-import User from "../../models/Users.js";
+import User from "../../models/User.js";
 
 export default class UsersDAO {
   static async emailExistsCheck(email) {
@@ -6,8 +6,8 @@ export default class UsersDAO {
       const user = await User.findOne({ email });
       return user;
     } catch (e) {
-      console.error(`DAO - Unable to check users: ${e}`);
-      return { error: e };
+      console.error(`Unable to check users: ${e}`);
+      // return { error: e };
     }
   }
   static async registerUser(personalInfo) {
@@ -21,8 +21,18 @@ export default class UsersDAO {
 
       return registerResponse;
     } catch (e) {
-      console.error(`DAO - Unable to register the user: ${e}}`);
-      return { error: e };
+      console.error(`Unable to register the user: ${e}}`);
+      // return { error: e };
+      throw e;
+    }
+  }
+  static async deleteUser(id) {
+    try {
+      const userDeletionRes = await User.findOneAndDelete({ _id: id });
+      return userDeletionRes;
+    } catch (e) {
+      console.error(`Unable to delete user: ${e}`);
+      throw e;
     }
   }
 }

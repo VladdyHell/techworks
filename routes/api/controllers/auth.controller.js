@@ -10,8 +10,8 @@ export default class AuthCtrl {
       const user = await AuthDAO.getAuthUser(req.user.id);
       res.json(user);
     } catch (e) {
-      console.error(e.stack);
-      res.status(500).json({ error: "Server error" });
+      // console.error(e.stack);
+      res.status(500).json({ error: e.toString() });
     }
   }
   static apiValidateUser() {
@@ -66,8 +66,8 @@ export default class AuthCtrl {
 
       // res.json({ msg: "User registered" });
     } catch (e) {
-      console.error(e.stack);
-      res.status(500).json({ error: "Server error" });
+      // console.error(e.stack);
+      res.status(500).json({ error: e.toString() });
     }
   }
 }

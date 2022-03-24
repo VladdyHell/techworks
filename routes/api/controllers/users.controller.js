@@ -76,8 +76,8 @@ export default class UsersCtrl {
 
       // res.json({ msg: "User registered" });
     } catch (e) {
-      console.error(e.stack);
-      res.status(500).json({ error: "Server error" });
+      console.error(e);
+      res.status(500).json({ error: e.toString() });
     }
   }
 }

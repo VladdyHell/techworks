@@ -15,6 +15,7 @@ const port = process.env.PORT || 8000;
 app.use(cors());
 
 app.use(express.json({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
   res.send("API running");

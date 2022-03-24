@@ -3,7 +3,7 @@ import UsersCtrl from "../controllers/users.controller.js";
 
 const router = Router();
 
-// @route  POST api/users
+// @route  POST api/v1/users
 // @desc   Register user
 // @access Public
 

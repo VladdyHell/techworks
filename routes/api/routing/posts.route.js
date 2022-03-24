@@ -2,7 +2,7 @@ import { Router } from "express";
 
 const router = Router();
 
-// @route  GET api/posts
+// @route  GET api/v1/posts
 // @desc   Test route
 // @access Public
 

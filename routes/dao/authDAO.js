@@ -1,17 +1,22 @@
-import User from "../../models/Users.js";
+import User from "../../models/User.js";
 
 export default class AuthDAO {
   static async getAuthUser(id) {
-    const user = await User.findById(id).select("-password");
-    return user;
+    try {
+      const user = await User.findById(id).select("-password");
+      return user;
+    } catch (e) {
+      console.error(`Unable to get authorized user: ${e}`);
+      throw e;
+    }
   }
   static async getUser(email) {
     try {
       const user = await User.findOne({ email });
       return user;
     } catch (e) {
-      console.error(`DAO - Unable to check users: ${e}`);
-      return { error: e };
+      console.error(`Unable to check users: ${e}`);
+      throw e;
     }
   }
 }
