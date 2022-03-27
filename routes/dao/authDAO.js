@@ -1,7 +1,7 @@
 import User from "../../models/User.js";
 
 export default class AuthDAO {
-  static async getAuthUser(id) {
+  static async getAuthUserById(id) {
     try {
       const user = await User.findById(id).select("-password");
       return user;

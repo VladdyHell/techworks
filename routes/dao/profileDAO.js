@@ -1,7 +1,8 @@
 import Profile from "../../models/Profile.js";
-import { ObjectID as ObjectId } from "mongodb";
+// import { ObjectID as ObjectId } from "mongodb";
 import config from "config";
 import axios from "axios";
+import CustomError from "../../lib/error.js";
 
 export default class ProfileDAO {
   static async getAuthProfile(id) {
@@ -22,6 +23,7 @@ export default class ProfileDAO {
   static async createUpdateUserProfile(id, profileFields) {
     try {
       // The video has a different implementation for upsert
+      // upsert automatically inserts the query (user.id) as a new field
       const createUpdateResponse = await Profile.findOneAndUpdate(
         { user: id },
         { $set: profileFields },
@@ -79,12 +81,17 @@ export default class ProfileDAO {
         // { $push: { experience: { $each: [exp], $position: 0 } } }
       );
 
+      if (!profile) throw new CustomError("404", "Profile Not Found");
+
       const exists = profile.experience.some(
         (exp) => exp.title == expBody.title
       );
 
       if (exists)
-        throw new Error(`Experience already exists: ${expBody.title}`);
+        throw new CustomError(
+          "400",
+          `Experience already exists: ${expBody.title}`
+        );
 
       profile.experience.unshift(expBody);
 
@@ -99,11 +106,21 @@ export default class ProfileDAO {
 
   static async deleteProfileExperience(id, expId) {
     try {
-      const expDeleteionRes = await Profile.updateOne(
-        { user: id },
-        { $pull: { experience: { _id: expId } } },
-        { new: true }
+      const getExpRes = await Profile.findOne({ user: id });
+
+      if (!getExpRes) throw new CustomError("404", "Profile Not Found");
+
+      const exists = getExpRes.experience.some(
+        (exp) => exp._id.toString() == expId
       );
+
+      if (!exists) throw new CustomError("404", `Experience Not Found`);
+
+      getExpRes.experience = getExpRes.experience.filter(
+        (exp) => exp._id.toString() != expId
+      );
+
+      const expDeleteionRes = await getExpRes.save();
 
       // return typeof ObjectId(profile.experience[0]._id);
 
@@ -118,12 +135,17 @@ export default class ProfileDAO {
     try {
       const profile = await Profile.findOne({ user: id });
 
+      if (!profile) throw new CustomError("404", "Profile Not Found");
+
       const exists = profile.education.some(
         (edu) => edu.school == eduBody.school
       );
 
       if (exists)
-        throw new Error(`Education already exists: ${eduBody.school}`);
+        throw new CustomError(
+          "400",
+          `Education already exists: ${eduBody.school}`
+        );
 
       profile.education.unshift(eduBody);
 
@@ -138,13 +160,23 @@ export default class ProfileDAO {
 
   static async deleteProfileEducation(id, eduId) {
     try {
-      const eduDeleteionRes = await Profile.updateOne(
-        { user: id },
-        { $pull: { education: { _id: eduId } } },
-        { new: true }
+      const getEduRes = await Profile.findOne({ user: id });
+
+      if (!getEduRes) throw new CustomError("404", "Profile Not Found");
+
+      const exists = getEduRes.education.some(
+        (edu) => edu._id.toString() == eduId
       );
 
-      // return typeof ObjectId(profile.experience[0]._id);
+      if (!exists) throw new CustomError("404", `Education Not Found`);
+
+      getEduRes.education = getEduRes.education.filter(
+        (edu) => edu._id.toString() != eduId
+      );
+
+      const eduDeleteionRes = await getEduRes.save();
+
+      // return typeof ObjectId(profile.education[0]._id);
 
       return eduDeleteionRes;
     } catch (e) {

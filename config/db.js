@@ -6,6 +6,8 @@ const db = config.get("mongoURI");
 const connectDB = async () => {
   try {
     await mongoose.connect(db, {
+      maxPoolSize: 50,
+      wtimeoutMS: 2500,
       useNewUrlParser: true,
     });
     console.log("MongoDB Connected...");

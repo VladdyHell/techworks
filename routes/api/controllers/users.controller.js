@@ -7,7 +7,6 @@ import UsersDAO from "../../dao/usersDAO.js";
 
 export default class UsersCtrl {
   static apiValidateUser() {
-    console.log("Validation started...");
     return [
       check("firstName", "First name is required").not().isEmpty(),
       check("lastName", "Last name is required").not().isEmpty(),
@@ -19,10 +18,7 @@ export default class UsersCtrl {
     ];
   }
   static async apiRegisterUser(req, res) {
-    console.log("Register request started...");
-    // console.log("Requests", req);
     const errors = validationResult(req);
-    // console.error("Errors:", errors);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
@@ -46,7 +42,8 @@ export default class UsersCtrl {
         d: "404",
       });
 
-      // TM's implementation - hash after instiating a schema
+      // TM's implementation - instiate a schema before hashing
+
       const salt = await bcrypt.genSalt(10);
       password = await bcrypt.hash(password, salt);
 
@@ -57,6 +54,8 @@ export default class UsersCtrl {
         password,
         avatar,
       });
+
+      // Sign in after the registration
 
       const payload = {
         user: {
@@ -76,8 +75,8 @@ export default class UsersCtrl {
 
       // res.json({ msg: "User registered" });
     } catch (e) {
-      console.error(e);
-      res.status(500).json({ error: e.toString() });
+      console.error(`API: ${e}`);
+      res.status(500).json({ msg: "Server Error", error: e.toString() });
     }
   }
 }

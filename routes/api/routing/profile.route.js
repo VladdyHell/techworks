@@ -5,9 +5,8 @@ import auth from "../../../middleware/auth.js";
 const router = Router();
 
 // @route  GET api/v1/profile/me
-// @desc   Get current users profile
-// @access Public
-
+// @desc   Get current user's profile
+// @access Private
 router.get("/me", auth, ProfileCtrl.apiGetAuthProfile);
 
 router
@@ -20,9 +19,9 @@ router
   // @route  POST api/v1/profile
   // @desc	 Create or update user profile
   // @access Private
-  .post(
+  .put(
     auth,
-    ProfileCtrl.apiValidateUser(),
+    ProfileCtrl.apiValidateProfile(),
     ProfileCtrl.apiCreateUpdateUserProfile
   )
 
@@ -34,7 +33,6 @@ router
 // @route    GET api/v1/profile/user/:user_id
 // @desc     Get profile by user ID
 // @access   Public
-
 router.get("/user/:user_id", ProfileCtrl.apiGetProfileById);
 
 router
@@ -71,7 +69,7 @@ router
   // @access	Private
   .delete(auth, ProfileCtrl.apiDeleteProfileEducation);
 
-// @route		DELETE api/v1/profile/github/:username
+// @route		GET api/v1/profile/github/:username
 // @desc		Get user repos from Github
 // @access	Public
 router.get("/github/:username", ProfileCtrl.apiGetUserGHRepos);

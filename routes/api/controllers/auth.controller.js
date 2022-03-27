@@ -5,27 +5,23 @@ import jwt from "jsonwebtoken";
 import AuthDAO from "../../dao/authDAO.js";
 
 export default class AuthCtrl {
-  static async apiGetAuthUser(req, res, next) {
+  static async apiGetAuthUserById(req, res) {
     try {
       const user = await AuthDAO.getAuthUser(req.user.id);
       res.json(user);
     } catch (e) {
-      // console.error(e.stack);
-      res.status(500).json({ error: e.toString() });
+      res.status(500).json({ msg: "Server Error", error: e.toString() });
     }
   }
   static apiValidateUser() {
-    console.log("Validation started...");
     return [
       check("email", "Please include a valid email").isEmail(),
       check("password", "Password is required").exists(),
     ];
   }
   static async apiAuthenticate(req, res) {
-    console.log("Authentication request started...");
-    // console.log("Requests", req);
     const errors = validationResult(req);
-    // console.error("Errors:", errors);
+
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
@@ -35,6 +31,8 @@ export default class AuthCtrl {
     try {
       const user = await AuthDAO.getUser(email);
 
+      // Showing message as 'Invalid email' message violates the best practices
+      // Use 'Invalid Credentials' instead
       if (!user) {
         return res.status(400).json({ errors: [{ msg: "Invalid Email" }] });
       }
@@ -64,10 +62,10 @@ export default class AuthCtrl {
         }
       );
 
-      // res.json({ msg: "User registered" });
+      // res.json({ msg: "User authenticated" });
     } catch (e) {
-      // console.error(e.stack);
-      res.status(500).json({ error: e.toString() });
+      console.error(`API: ${e}`);
+      res.status(500).json({ msg: "Server Error", error: e.toString() });
     }
   }
 }
