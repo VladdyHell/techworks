@@ -1,0 +1,1 @@
+export const SET_SIGNUP_ERROR = "SET_SIGNUP_ERROR";
