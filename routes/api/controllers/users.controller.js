@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import gravatar from "gravatar";
 import jwt from "jsonwebtoken";
 import UsersDAO from "../../dao/usersDAO.js";
+import CustomError from '../../../lib/error.js';
 
 export default class UsersCtrl {
   static apiValidateUser() {
@@ -18,14 +19,14 @@ export default class UsersCtrl {
     ];
   }
   static async apiRegisterUser(req, res) {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    let { firstName, lastName, email, password } = req.body;
-
     try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        throw new CustomError("400", "Validation Error", errors.array());
+      }
+
+      let { firstName, lastName, email, password } = req.body;
+
       // TM's implementation to the user(let) should be redeclared as
       // an instiation of User Schema constructor
       const user = await UsersDAO.emailExistsCheck(email);
@@ -33,7 +34,7 @@ export default class UsersCtrl {
       if (user) {
         return res
           .status(400)
-          .json({ errors: [{ msg: "User already exists" }] });
+          .json({ errors: [{ msg: "User already exists", param: "email" }] });
       }
 
       const avatar = gravatar.url(email, {
@@ -76,6 +77,7 @@ export default class UsersCtrl {
       // res.json({ msg: "User registered" });
     } catch (e) {
       console.error(`API: ${e}`);
+      if (e.kind == "400") return res.status(e.kind).json(e);
       res.status(500).json({ msg: "Server Error", error: e.toString() });
     }
   }

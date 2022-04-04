@@ -1,5 +1,6 @@
 const path = require("path");
 const webpack = require("webpack");
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   entry: "./src/index.js",
@@ -45,7 +46,19 @@ module.exports = {
     },
     // hotOnly
     hot: "only",
+
+    // To use router
     historyApiFallback: true,
+
+    // Proxy
+    /*proxy: {
+      "/api/v1": "http://localhost:8000",
+    },*/
   },
-  plugins: [new webpack.HotModuleReplacementPlugin()],
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new Dotenv({
+      systemvars: true,
+    }),
+  ],
 };

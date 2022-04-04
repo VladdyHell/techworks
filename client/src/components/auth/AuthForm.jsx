@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import {
+	useParams,
+	useNavigate,
+	useLocation,
+	Navigate,
+} from "react-router-dom";
 import RegisterForm from "./register/Form";
-import LoginForm from "./Login";
+import LoginForm from "./login/Login";
 import { makeStyles, Container, Tabs, Tab, AppBar } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
@@ -53,9 +58,10 @@ const AuthForm = () => {
 		setSelectedTab(newVal);
 	};
 
+	const authPath = pathname.split("/")[2];
+
 	useEffect(() => {
-		const path = pathname.split("/")[2];
-		setSelectedTab(indexToTabName[path]);
+		setSelectedTab(indexToTabName[authPath]);
 	}, [pathname]);
 
 	return (
@@ -87,16 +93,8 @@ const AuthForm = () => {
 					/>
 				</Tabs>
 			</AppBar>
-			{
-				selectedTab === 0 ||  pathname == "/auth/signup" ? (
-					<RegisterForm />
-				) : null
-			}
-			{
-				selectedTab === 1 ||  pathname == "/auth/signin" ? (
-					<LoginForm />
-				) : null
-			}
+			{selectedTab === 0 || authPath == "signup" ? <RegisterForm /> : null}
+			{selectedTab === 1 || authPath == "signin" ? <LoginForm /> : null}
 		</Container>
 	);
 };

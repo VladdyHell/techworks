@@ -1,6 +1,9 @@
 import { combineReducers } from "redux";
-import { signupError } from "./signupError";
+import { auth, formError } from "./auth";
+import { profile } from "./profile";
 
 export default combineReducers({
-	signupError,
+	auth,
+	formError,
+	profile,
 });

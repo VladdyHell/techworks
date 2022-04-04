@@ -1,18 +1,40 @@
-import React from "react";
+// Ecosystem
+import React, { useEffect } from "react";
 import { hot } from "react-hot-loader";
 import { Routes, Route } from "react-router-dom";
+import "./App.css";
+
+// MUI
 import {
   createTheme,
   ThemeProvider,
   makeStyles,
   Container,
 } from "@material-ui/core";
-import "./App.css";
+
+// Pages
 import LandingPage, { navHeight } from "./pages/LandingPage";
-import Navbar from "./components/Navbar";
-import LoginPage from "./pages/LoginPage";
-import Footer, { footerPadding, footerFontSize } from "./components/Footer";
 import AuthPage from "./pages/AuthPage";
+import NewsFeed from "./pages/NewsFeed";
+import Profile from "./pages/Profile";
+
+// Components
+import Navbar from "./components/layouts/Navbar";
+// import LoginPage from "./pages/LoginPage";
+import Footer, {
+  footerPadding,
+  footerFontSize,
+} from "./components/layouts/Footer";
+import PrivateRoute from "./components/layouts/PrivateRoute";
+
+// Redux
+// import { configureStore as store } from "./store";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { authorize } from "./thunks/auth";
+import setAuthToken from "./utils/setAuthToken";
+
+// console.log('APP DID MOUNT')
 
 export const totalHeroShrink = navHeight + footerPadding + footerFontSize;
 
@@ -29,8 +51,8 @@ const theme = createTheme({
     // secondary: "#BBE1FA",
     secondary: {
       main: "#B86832",
-      light: '#FAD4BB',
-      dark: '#75380F',
+      light: "#FAD4BB",
+      dark: "#75380F",
     },
   },
   typography: {
@@ -49,16 +71,41 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function App() {
+function App({ authorize }) {
   const classes = useStyles();
+
+  useEffect(() => {
+    if (localStorage.token) {
+      setAuthToken(localStorage.token);
+    }
+    authorize();
+
+    // log user out from all tabs if they log out in one tab
+    window.addEventListener("storage", () => {
+      if (!localStorage.token) store.dispatch({ type: LOGOUT });
+    });
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <Navbar />
       <Container className={classes.baseContainer}>
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="*" element={<h1>404 Not Found</h1>} />
+          <Route
+            path="*"
+            element={
+              <h1 style={{ fontSize: "64px", textAlign: "center" }}>
+                404 Not Found
+              </h1>
+            }
+          />
           <Route path="/auth/:page" element={<AuthPage />} />
+          <Route path="/home" element={<PrivateRoute component={NewsFeed} />} />
+          <Route
+            path="/profile/me"
+            element={<PrivateRoute component={Profile} />}
+          />
           {/*<Route path="/signin" element={<LoginPage />} />*/}
         </Routes>
       </Container>
@@ -67,4 +114,8 @@ function App() {
   );
 }
 
-export default hot(module)(App);
+App.propTypes = {
+  authorize: PropTypes.func.isRequired,
+};
+
+export default hot(module)(connect(null, { authorize })(App));

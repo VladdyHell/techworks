@@ -9,6 +9,10 @@ import {
 } from "@material-ui/core";
 import Tagline from "../components/auth/Tagline";
 import AuthForm from "../components/auth/AuthForm";
+import { useNavigate, Navigate } from "react-router-dom";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { auth } from "../reducers/auth";
 
 import { totalHeroShrink } from "../App";
 
@@ -48,8 +52,12 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-const SignupPage = () => {
+const AuthPage = ({ isAuthenticated }) => {
 	const classes = useStyles();
+
+	if (isAuthenticated) {
+		return <Navigate to="/home" />;
+	}
 
 	return (
 		<Container className={classes.container}>
@@ -73,4 +81,12 @@ const SignupPage = () => {
 	);
 };
 
-export default SignupPage;
+AuthPage.propTypes = {
+	isAuthenticated: PropTypes.bool,
+};
+
+const mapStateToProps = (state) => ({
+	isAuthenticated: state.auth.isAuthenticated,
+});
+
+export default connect(mapStateToProps)(AuthPage);

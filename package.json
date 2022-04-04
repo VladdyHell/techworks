@@ -6,8 +6,11 @@
   "main": "server.js",
   "scripts": {
     "start": "node server",
+    "build": "npx webpack-dev-server --mode development --prefix client",
     "server": "nodemon --experimental-json-modules --exec babel-node server",
-    "debug": "DEBUG=express:* nodemon --experimental-json-modules --exec babel-node server"
+    "debug": "DEBUG=express:* nodemon --experimental-json-modules --exec babel-node server",
+    "client": "npm run dev --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "author": "Vladdyhell",
   "license": "MIT",
