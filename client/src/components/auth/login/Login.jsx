@@ -176,12 +176,12 @@ Login.propTypes = {
 	formError: PropTypes.object.isRequired,
 	setFormError: PropTypes.func.isRequired,
 	login: PropTypes.func.isRequired,
-	authLoading: PropTypes.object.isRequired,
+	authLoading: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({
 	formError: state.formError,
-	authLoading: state.auth.loading,
+	authLoading: state.formError.loading,
 });
 
 const mapDispatchToProps = (dispatch) => ({

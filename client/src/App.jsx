@@ -10,7 +10,9 @@ import {
   ThemeProvider,
   makeStyles,
   Container,
+  responsiveFontSizes,
 } from "@material-ui/core";
+import { yellow, green, pink, blue, white, red } from "@material-ui/core/colors";
 
 // Pages
 import LandingPage, { navHeight } from "./pages/LandingPage";
@@ -18,7 +20,7 @@ import AuthPage from "./pages/AuthPage";
 import NewsFeed from "./pages/NewsFeed";
 import Profile from "./pages/Profile";
 
-// Components
+// Pages
 import Navbar from "./components/layouts/Navbar";
 // import LoginPage from "./pages/LoginPage";
 import Footer, {
@@ -26,6 +28,8 @@ import Footer, {
   footerFontSize,
 } from "./components/layouts/Footer";
 import PrivateRoute from "./components/layouts/PrivateRoute";
+import LoadingScreen from "./components/layouts/LoadingScreen";
+// import CreateProfile from "./pages/CreateProfile";
 
 // Redux
 // import { configureStore as store } from "./store";
@@ -38,21 +42,21 @@ import setAuthToken from "./utils/setAuthToken";
 
 export const totalHeroShrink = navHeight + footerPadding + footerFontSize;
 
-const theme = createTheme({
+let theme = createTheme({
   palette: {
     common: {
       black: "#1B262C",
     },
     primary: {
-      main: "#3282B8",
-      light: "#BBE1FA",
-      dark: "#0F4C75",
+      main: blue[500]/*"#3282B8"*/,
+      // light: "#BBE1FA",
+      // dark: "#0F4C75",
     },
     // secondary: "#BBE1FA",
     secondary: {
-      main: "#B86832",
-      light: "#FAD4BB",
-      dark: "#75380F",
+      main: red[500]/*"#B86832"*/,
+      // light: "#FAD4BB",
+      // dark: "#75380F",
     },
   },
   typography: {
@@ -64,6 +68,8 @@ const theme = createTheme({
   },
 });
 
+theme = responsiveFontSizes(theme);
+
 const useStyles = makeStyles((theme) => ({
   baseContainer: {
     minHeight: `calc(100vh - ${theme.spacing(totalHeroShrink)}px)`,
@@ -71,7 +77,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function App({ authorize }) {
+function App({ authorize, authorizing, isAuthenticated }) {
   const classes = useStyles();
 
   useEffect(() => {
@@ -84,14 +90,29 @@ function App({ authorize }) {
     window.addEventListener("storage", () => {
       if (!localStorage.token) store.dispatch({ type: LOGOUT });
     });
+
+    if (!localStorage.profileBG) {
+      localStorage.setItem("profileBG", Math.floor(Math.random() * 4));
+    }
   }, []);
 
-  return (
+  return authorizing ? (
+    <LoadingScreen />
+  ) : (
     <ThemeProvider theme={theme}>
       <Navbar />
       <Container className={classes.baseContainer}>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+          <Route
+            path="/"
+            element={
+              !isAuthenticated ? (
+                <LandingPage />
+              ) : (
+                <PrivateRoute component={NewsFeed} />
+              )
+            }
+          />
           <Route
             path="*"
             element={
@@ -103,9 +124,14 @@ function App({ authorize }) {
           <Route path="/auth/:page" element={<AuthPage />} />
           <Route path="/home" element={<PrivateRoute component={NewsFeed} />} />
           <Route
-            path="/profile/me"
+            path="/profile/me/"
             element={<PrivateRoute component={Profile} />}
-          />
+          />{/*
+            <Route
+              path="create"
+              element={<PrivateRoute component={CreateProfile} />}
+            />
+          </Route>*/}
           {/*<Route path="/signin" element={<LoginPage />} />*/}
         </Routes>
       </Container>
@@ -116,6 +142,13 @@ function App({ authorize }) {
 
 App.propTypes = {
   authorize: PropTypes.func.isRequired,
+  authorizing: PropTypes.bool,
+  isAuthenticated: PropTypes.bool,
 };
 
-export default hot(module)(connect(null, { authorize })(App));
+const mapStateToProps = (state) => ({
+  authorizing: state.auth.authorizing,
+  isAuthenticated: state.auth.isAuthenticated,
+});
+
+export default hot(module)(connect(mapStateToProps, { authorize })(App));

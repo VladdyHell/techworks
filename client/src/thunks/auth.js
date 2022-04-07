@@ -20,6 +20,10 @@ export const authorize = () => async (dispatch) => {
 	try {
 		dispatch(authInProgress());
 
+		if (localStorage.token) {
+      setAuthToken(localStorage.token);
+    }
+
 		const res = await http.get("/auth");
 
 		dispatch(authSuccess(res.data));
@@ -38,6 +42,7 @@ export const signup = (infos) => async (dispatch) => {
 		DEBUG && console.log(res.data);
 
 		dispatch(signupSuccess(res.data));
+		dispatch(authorize());
 	} catch (e) {
 		const err = e.response.data;
 		DEBUG && console.error(err.errors);
@@ -46,7 +51,7 @@ export const signup = (infos) => async (dispatch) => {
 		const errFields = err.errors.map(({ param }) => param);
 
 		errFields.forEach((field) => {
-			const errMsg = err.errors[errFields.indexOf(field)].msg
+			const errMsg = err.errors[errFields.indexOf(field)].msg;
 			if (field != "password") {
 				return dispatch(
 					setFormError({
@@ -77,13 +82,12 @@ export const signup = (infos) => async (dispatch) => {
 
 export const login = (infos) => async (dispatch) => {
 	try {
-		console.log("Login started...");
 		dispatch(loginInProgress());
 
-		console.log("Request Started...");
 		const res = await http.post("/auth", infos);
 
 		dispatch(loginSuccess(res.data));
+		dispatch(authorize());
 	} catch (e) {
 		const err = e.response.data;
 		dispatch(loginError(err));
@@ -91,7 +95,7 @@ export const login = (infos) => async (dispatch) => {
 		const errFields = err.errors.map(({ param }) => param);
 
 		errFields.forEach((field) => {
-			const errMsg = err.errors[errFields.indexOf(field)].msg
+			const errMsg = err.errors[errFields.indexOf(field)].msg;
 			dispatch(
 				setFormError({
 					[field]: {

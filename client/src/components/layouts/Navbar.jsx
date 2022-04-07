@@ -31,9 +31,10 @@ const useStyles = makeStyles((theme) => ({
     // marginLeft: theme.spacing(3),
     backgroundColor: () => {
       const profileColors = [yellow[700], green[500], pink[500], blue[500]];
-      return profileColors[
-        Math.floor(Math.random()) * profileColors.length + 1
-      ];
+      return (
+        // Math.floor(Math.random() * profileColors.length)
+        profileColors[localStorage.profileBG]
+      );
     },
   },
   link: {
@@ -76,7 +77,7 @@ function Navbar({ isLoading, isAuthenticated, logout, user }) {
               <IconButton onClick={() => navigate("/profile/me")}>
                 {/*<AccountCircle color="secondary" fontSize="large" className={classes.avatar} />;*/}
                 <Avatar className={classes.avatar}>
-                  {user.firstName[0].toUpperCase()}
+                  {user && user.firstName[0].toUpperCase()}
                 </Avatar>
               </IconButton>
               <Button onClick={handleLogout} variant="text" color="inherit">

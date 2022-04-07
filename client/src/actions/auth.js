@@ -10,6 +10,7 @@ import {
 	LOGIN_IN_PROGRESS,
 	LOGIN_ERROR,
 	LOGOUT,
+	CLEAR_PROFILE,
 } from "./types";
 
 export const setFormError = (errorObj) => (dispatch) => {
@@ -44,11 +45,19 @@ export const signupSuccess = (token) => (dispatch) => {
 		type: SIGNUP_SUCCESS,
 		payload: token,
 	});
+	dispatch({
+		type: SET_FORM_ERROR,
+		payload: { loading: false },
+	});
 };
 
 export const signupInProgress = () => (dispatch) => {
 	dispatch({
 		type: SIGNUP_IN_PROGRESS,
+	});
+	dispatch({
+		type: SET_FORM_ERROR,
+		payload: { loading: true },
 	});
 };
 
@@ -57,6 +66,10 @@ export const signupError = (err) => (dispatch) => {
 		type: SIGNUP_ERROR,
 		payload: { err },
 	});
+	dispatch({
+		type: SET_FORM_ERROR,
+		payload: { loading: false },
+	});
 };
 
 export const loginSuccess = (token) => (dispatch) => {
@@ -64,11 +77,19 @@ export const loginSuccess = (token) => (dispatch) => {
 		type: LOGIN_SUCCESS,
 		payload: token,
 	});
+	dispatch({
+		type: SET_FORM_ERROR,
+		payload: { loading: false },
+	});
 };
 
 export const loginInProgress = () => (dispatch) => {
 	dispatch({
 		type: LOGIN_IN_PROGRESS,
+	});
+	dispatch({
+		type: SET_FORM_ERROR,
+		payload: { loading: true },
 	});
 };
 
@@ -77,10 +98,17 @@ export const loginError = (err) => (dispatch) => {
 		type: LOGIN_ERROR,
 		payload: { err },
 	});
+	dispatch({
+		type: SET_FORM_ERROR,
+		payload: { loading: false },
+	});
 };
 
 export const logout = () => (dispatch) => {
 	dispatch({
 		type: LOGOUT,
+	});
+	dispatch({
+		type: CLEAR_PROFILE,
 	});
 };

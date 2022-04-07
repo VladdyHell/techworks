@@ -37,6 +37,7 @@ export const initialFormState = {
 		msg: null,
 		type: null,
 	},
+	loading: false,
 };
 
 export const formError = (state = initialFormState, action) => {
@@ -46,7 +47,7 @@ export const formError = (state = initialFormState, action) => {
 		case SET_FORM_ERROR: {
 			const { errorObj } = payload;
 			console.log({ ...state, ...errorObj });
-			return { ...state, ...errorObj };
+			return { ...state, ...errorObj, loading: payload.loading };
 		}
 		default:
 			return state;
@@ -60,6 +61,7 @@ const initialAuthState = {
 	isAuthenticated: null,
 	user: null,
 	loading: false,
+	authorizing: true,
 };
 
 export const auth = (state = initialAuthState, action) => {
@@ -71,14 +73,14 @@ export const auth = (state = initialAuthState, action) => {
 			return {
 				...state,
 				isAuthenticated: true,
-				loading: false,
+				authorizing: false,
 				user: payload.user,
 			};
 		}
 		case AUTH_IN_PROGRESS: {
 			return {
 				...state,
-				loading: true,
+				authorizing: true,
 			};
 		}
 		case SIGNUP_SUCCESS:
@@ -111,6 +113,8 @@ export const auth = (state = initialAuthState, action) => {
 				token: null,
 				isAuthenticated: false,
 				loading: false,
+				authorizing: false,
+				user: null,
 			};
 		}
 		default:

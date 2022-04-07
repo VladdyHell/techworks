@@ -3,8 +3,9 @@ import { check, validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
 import gravatar from "gravatar";
 import jwt from "jsonwebtoken";
+import capitalize from "capitalize";
 import UsersDAO from "../../dao/usersDAO.js";
-import CustomError from '../../../lib/error.js';
+import CustomError from "../../../lib/error.js";
 
 export default class UsersCtrl {
   static apiValidateUser() {
@@ -47,6 +48,9 @@ export default class UsersCtrl {
 
       const salt = await bcrypt.genSalt(10);
       password = await bcrypt.hash(password, salt);
+
+      firstName = capitalize(firstName);
+      lastName = capitalize(lastName);
 
       const registerResponse = await UsersDAO.registerUser({
         firstName,

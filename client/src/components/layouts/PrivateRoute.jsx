@@ -6,7 +6,7 @@ import { Navigate } from "react-router-dom";
 function PrivateRoute({ component: Component, isLoading, isAuthenticated }) {
   if (isLoading)
     return (
-      <h1 style={{ fontSize: "64px", textAlign: "center" }}>Loading...</h1>
+      <h1>Loading Private Route...</h1>
     );
   if (isAuthenticated) return <Component />;
   return <Navigate to="/auth/signin" />;

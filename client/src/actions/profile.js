@@ -4,9 +4,10 @@ import {
 	GET_PROFILE_FAILURE,
 } from "./types";
 
-export const getProfileSuccess = () => (dispatch) => {
+export const getProfileSuccess = (profile) => (dispatch) => {
 	dispatch({
 		type: GET_PROFILE_SUCCESS,
+		payload: { profile },
 	});
 };
 
@@ -16,8 +17,9 @@ export const getProfileInProgress = () => (dispatch) => {
 	});
 };
 
-export const getProfileFailure = () => (dispatch) => {
+export const getProfileFailure = (err) => (dispatch) => {
 	dispatch({
 		type: GET_PROFILE_FAILURE,
+		payload: { err },
 	});
 };

@@ -311,7 +311,7 @@ Form.propTypes = {
 
 const mapStateToProps = (state) => ({
 	formError: state.formError,
-	authLoading: state.auth.loading,
+	authLoading: state.formError.loading,
 });
 
 const mapDispatchToProps = (dispatch) => ({
