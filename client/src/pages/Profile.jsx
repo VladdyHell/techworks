@@ -121,7 +121,7 @@ const useStyles = (profileColor) =>
 			fontSize: "32px",
 			position: "absolute",
 			top: 0,
-			color: /*"transparent"*/"#ffebee",
+			color: /*"transparent"*/ "#ffebee",
 			[theme.breakpoints.down("sm")]: {
 				left: "unset",
 			},
