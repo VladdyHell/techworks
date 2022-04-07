@@ -24,6 +24,8 @@ import ProfileLayout from "../components/layouts/ProfileLayout";
 import ProfileStatus from "../components/profile/ProfileStatus";
 import ProfileInfo from "../components/profile/ProfileInfo";
 
+const profileCoverURL = "https://picsum.photos/960/336/"
+
 const useStyles = (profileColor) =>
 	makeStyles((theme) => ({
 		container: {
@@ -47,8 +49,8 @@ const useStyles = (profileColor) =>
 		profileCover: {
 			width: "100%",
 			height: 336,
-			// background:
-			// 	'url("https://picsum.photos/960/336/?grayscale&blur") no-repeat top right',
+			background:
+				`url("${profileCoverURL}") no-repeat top right`,
 			backgroundSize: `${theme.spacing(120)}px ${theme.spacing(42)}px`,
 			position: "absolute",
 			zIndex: 0,
@@ -69,10 +71,10 @@ const useStyles = (profileColor) =>
 		profileInfo: {
 			display: "flex",
 			position: "absolute",
-			left: "88px",
-			bottom: /*"64px"*/ "80px",
 			alignItems: "end",
 			zIndex: 2,
+			width: "100%",
+			height: "100%",
 			[theme.breakpoints.down("sm")]: {
 				top: "348px",
 				flexDirection: "column",
@@ -98,20 +100,40 @@ const useStyles = (profileColor) =>
 			// width: "180px",
 			// height: "180px",
 			position: "relative",
-			bottom: "32px",
+			bottom: "36px",
+			left: "88px",
 			transform: "scale(4.5)",
 			[theme.breakpoints.down("sm")]: {
 				transform: "scale(3.5)",
 			},
+			zIndex: 1,
+		},
+		nameWrapper: {
+			width: "226px",
+	    height: "42px",
+	    background: "rgba(0,0,0, 0.5)",
+	    position: "absolute",
+	    left: "212px",
+	    bottom: "6px",
+	    borderRadius: "12px",
 		},
 		profileName: {
 			fontSize: "32px",
-			position: "relative",
-			left: "96px",
-			color: "#ffebee",
+			position: "absolute",
+			top: 0,
+			color: /*"transparent"*/"#ffebee",
 			[theme.breakpoints.down("sm")]: {
 				left: "unset",
 			},
+			width: "100%",
+			height: "336px",
+			// backgroundImage: `url("${profileCoverURL}")`,
+			top: 0,
+			// backgroundClip: "text",
+			// filter: "invert(100%) contrast(4)",
+			display: "flex",
+			alignItems: "end",
+			paddingLeft: "224px",
 		},
 	}));
 
@@ -125,7 +147,7 @@ function Profile({
 	const { pathname } = useLocation();
 	const editProfilePath = pathname.split("/")[3];
 
-	const [coverLoaded, setCoverLoaded] = useState(false);
+	const [coverLoaded, setCoverLoaded] = useState(true);
 
 	// setInterval(()=>{console.log(coverLoaded);}, 5000)
 
@@ -150,16 +172,18 @@ function Profile({
 						/>
 					</>
 				)}
-				<img
-					src="https://picsum.photos/912/336/?grayscale&blur"
+				{/*<img
+					src={profileCoverURL}
 					className={classes.profileCover}
 					onLoad={() => setCoverLoaded(true)}
 				/>
-				<Container>
+*/}				<Container disableGutters className={classes.profileCover} 
+					onLoad={() => setCoverLoaded(true)}>
 					<Box component="span" className={classes.profileInfo}>
 						<Avatar className={classes.avatar}>
 							{user.firstName[0].toUpperCase()}
 						</Avatar>
+						<span className={classes.nameWrapper}></span>
 						<Typography variant="h6" className={classes.profileName}>
 							{user.firstName} {user.lastName}
 						</Typography>
