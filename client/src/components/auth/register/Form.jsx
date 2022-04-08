@@ -26,6 +26,12 @@ const useStyles = (loading) =>
 			margin: `0 ${theme.spacing(4)}px` /*`${theme.spacing(8)}px auto 0`*/,
 			width: /*"100%"*/ theme.spacing(44 /*38*/ /*56*/),
 			// filter: (loading) => (loading ? "blur(2px)" : null),
+			maxWidth: "100%",
+			[theme.breakpoints.down("sm")]: {
+				width: "100%",
+				padding: 0,
+				margin: 0,
+			},
 		},
 		field: {
 			marginTop: theme.spacing(1),

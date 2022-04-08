@@ -16,6 +16,10 @@ const useStyles = makeStyles((theme) => ({
 		flexDirection: "column",
 		justifyContent: "center",
 		alignItems: "center",
+		[theme.breakpoints.down("sm")]: {
+			paddingTop: theme.spacing(9),
+			paddingBottom: theme.spacing(4),
+		},
 	},
 	appbarRoot: {
 		width: "100%",

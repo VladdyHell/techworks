@@ -101,7 +101,7 @@ function App({ authorize, authorizing, isAuthenticated }) {
   ) : (
     <ThemeProvider theme={theme}>
       <Navbar />
-      <Container className={classes.baseContainer}>
+      <Container className={classes.baseContainer} disableGutters>
         <Routes>
           <Route
             path="/"

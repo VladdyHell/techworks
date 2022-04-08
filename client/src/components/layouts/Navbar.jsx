@@ -10,7 +10,7 @@ import {
   Avatar,
 } from "@material-ui/core";
 import { AccountCircle, BlurCircular } from "@material-ui/icons";
-import { yellow, green, pink, blue } from "@material-ui/core/colors";
+import { yellow, green, pink, orange } from "@material-ui/core/colors";
 import { connect } from "react-redux";
 import { auth } from "../../reducers/auth";
 import { logout } from "../../actions/auth";
@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
   avatar: {
     // marginLeft: theme.spacing(3),
     backgroundColor: () => {
-      const profileColors = [yellow[700], green[500], pink[500], blue[500]];
+      const profileColors = [yellow[700], green[500], pink[500], orange[500]];
       return (
         // Math.floor(Math.random() * profileColors.length)
         profileColors[localStorage.profileBG]

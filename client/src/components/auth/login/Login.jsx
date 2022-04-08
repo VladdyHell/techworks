@@ -24,6 +24,12 @@ const useStyles = (loading) =>
 			flexDirection: "column",
 			margin: `0 ${theme.spacing(4)}px`,
 			width: theme.spacing(44),
+			maxWidth: "100%",
+			[theme.breakpoints.down("sm")]: {
+				width: "100%",
+				padding: 0,
+				margin: 0,
+			},
 		},
 		field: {
 			marginTop: theme.spacing(1),

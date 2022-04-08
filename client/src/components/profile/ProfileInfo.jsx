@@ -15,7 +15,6 @@ import {
 import { Edit, Close, Check } from "@material-ui/icons";
 import { grey } from "@material-ui/core/colors";
 
-import { connect } from "react-redux";
 import ContentEditable from "react-contenteditable";
 
 const useStyles = makeStyles((theme) => ({
@@ -25,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-function CreateProfile() {
+function ProfileInfo({ profile }) {
 	const classes = useStyles();
 
 	const initialState = {
@@ -46,6 +45,8 @@ function CreateProfile() {
 	const bioRef = useRef();
 
 	const [bio, setBio] = useState(initialState.bio);
+	const [prevBio, setPrevBio] = useState();
+	const [handleClickName, setHandleClickName] = useState();
 
 	const handleChange = (e) => {
 		// bioRef.current = e.target.value
@@ -53,13 +54,27 @@ function CreateProfile() {
 		console.log(bio);
 	};
 
+	const handleClick = (e) => {
+		setHandleClickName(e.target.name);
+		if (e.target.name == "edit") {
+			setPrevBio(bio);
+		}
+	};
+
 	useEffect(() => {
+		console.log(disabledEditable, handleClickName, prevBio);
 		if (!disabledEditable) {
-			bioRef.current.focus();
 			if (bio == initialState.bio) {
 				setBio("");
 			}
-		} else {
+			bioRef.current.focus();
+		} else if (disabledEditable && handleClickName == "close") {
+			if (bioRef.current.textContent.trim() == "" || !prevBio) {
+				setBio(initialState.bio);
+			} else {
+				setBio(prevBio);
+			}
+		} else if (disabledEditable && handleClickName == "submit") {
 			if (bioRef.current.textContent.trim() == "") {
 				setBio(initialState.bio);
 			} else {
@@ -95,15 +110,36 @@ function CreateProfile() {
 			</CardContent>
 			<CardActions>
 				{disabledEditable ? (
-					<IconButton onClick={toggleEditable} color="secondary">
+					<IconButton
+						name="edit"
+						onClick={(e) => {
+							toggleEditable();
+							handleClick(e);
+						}}
+						color="secondary"
+					>
 						<Edit />
 					</IconButton>
 				) : (
 					<>
-						<IconButton onClick={toggleEditable} color="secondary">
+						<IconButton
+							name="close"
+							onClick={(e) => {
+								toggleEditable();
+								handleClick(e);
+							}}
+							color="secondary"
+						>
 							<Close />
 						</IconButton>
-						<IconButton onClick={toggleEditable} color="secondary">
+						<IconButton
+							name="submit"
+							onClick={(e) => {
+								toggleEditable();
+								handleClick(e);
+							}}
+							color="secondary"
+						>
 							<Check />
 						</IconButton>
 					</>
@@ -113,12 +149,4 @@ function CreateProfile() {
 	);
 }
 
-CreateProfile.propTypes = {
-	profile: PropTypes.object.isRequired,
-};
-
-const mapStateToProps = (state) => ({
-	profile: state.profile,
-});
-
-export default connect(mapStateToProps)(CreateProfile);
+export default ProfileInfo;

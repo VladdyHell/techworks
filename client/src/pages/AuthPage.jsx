@@ -30,6 +30,9 @@ const useStyles = makeStyles((theme) => ({
 		maxWidth: "100%",
 		height: theme.spacing(72 /*64*/),
 		margin: "0 auto",
+		[theme.breakpoints.down("sm")]: {
+			height: "100%",
+		},
 	},
 	taglineGridItem: {
 		// width: "50%",
@@ -37,9 +40,9 @@ const useStyles = makeStyles((theme) => ({
 		display: "flex",
 		justifyContent: "center",
 		alignItems: "center",
-		backgroundColor: "#3282b8",
+		backgroundColor: "#2196f3",
 		backgroundImage:
-			'url("https://www.transparenttextures.com/patterns/batthern.png")',
+			"url(https://www.transparenttextures.com/patterns/batthern.png)",
 	},
 	formGridItem: {
 		// width: "50%",

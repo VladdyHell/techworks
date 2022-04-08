@@ -1,14 +1,15 @@
 import React from "react";
 import { Typography, makeStyles } from "@material-ui/core";
 
-export const footerPadding = 2; // 4
+export const footerPadding = 6; // 4
 export const footerFontSize = 3;
 
 const useStyles = makeStyles((theme) => ({
 	footer: {
 		fontSize: `${theme.spacing(footerFontSize)}px`,
 		// paddingTop: "12.8rem",
-		paddingBottom: theme.spacing(footerPadding),
+		paddingTop: theme.spacing(footerPadding - 2),
+		paddingBottom: theme.spacing(footerPadding - 4),
 		color: "#828282",
 		textAlign: "center",
 	},
