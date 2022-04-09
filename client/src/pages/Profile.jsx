@@ -103,7 +103,7 @@ const useStyles = (profileColor, matchesSM) =>
 			},
 		},
 		profileGrid: {
-			marginTop: theme.spacing(2.5),
+			// marginTop: theme.spacing(2.5),
 		},
 		avatar: {
 			// marginLeft: theme.spacing(3),
@@ -243,7 +243,7 @@ function Profile({
 				<Grid item xs={12} md={4}>
 					{/*<ProfileStatus userProfile={userProfile} />*/}
 					<ProfileInfo profile={profile} />
-					<Outlet />
+					{/*<Outlet />*/}
 				</Grid>
 			</Grid>
 		</Container>
