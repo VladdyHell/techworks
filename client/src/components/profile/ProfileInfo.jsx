@@ -69,7 +69,7 @@ function ProfileInfo({ profile }) {
 			}
 			bioRef.current.focus();
 		} else if (disabledEditable && handleClickName == "close") {
-			if (bioRef.current.textContent.trim() == "" || !prevBio) {
+			if (bioRef.current.textContent.trim() == "" && !prevBio) {
 				setBio(initialState.bio);
 			} else {
 				setBio(prevBio);
@@ -89,13 +89,14 @@ function ProfileInfo({ profile }) {
 		<Card>
 			<CardHeader title="Bio" />
 			<CardContent>
-				<Typography variant="body2">
+				<Typography
+					variant="body2"
+					// ref={bioRef}
+					// contentEditable={editableField}
+					// suppressContentEditableWarning={true}
+					// onInput={handleChange}
+				>
 					<ContentEditable
-						// variant="body2"
-						// ref={bioRef}
-						// contentEditable={editableField}
-						// suppressContentEditableWarning={true}
-						// onInput={handleChange}
 						html={bio}
 						innerRef={bioRef}
 						onChange={handleChange}
@@ -103,6 +104,7 @@ function ProfileInfo({ profile }) {
 						style={{
 							minHeight: !disabledEditable && bio == "" && "20px",
 							border: !disabledEditable && `1px solid ${grey[500]}`,
+							wordWrap: "break-word",
 						}}
 					/>
 				</Typography>
