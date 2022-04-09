@@ -25,8 +25,6 @@ import ProfileLayout from "../components/layouts/ProfileLayout";
 // import ProfileCreateCTA from "../components/profile/ProfileCreateCTA";
 import ProfileInfo from "../components/profile/ProfileInfo";
 
-const profileCoverURL = "https://picsum.photos/960/336/";
-
 const useStyles = (profileColor, matchesSM) =>
 	makeStyles((theme) => ({
 		container: {
@@ -34,29 +32,41 @@ const useStyles = (profileColor, matchesSM) =>
 			flexDirection: "column",
 			justifyContent: "center",
 			alignItems: "center",
+			overflow: "hidden",
 			// width: theme.spacing(123), // Increase by padding
 		},
 		profileMain: {
 			width: "100%",
 			height: theme.spacing(50),
 			position: "relative",
+			overflow: "hidden",
 			// background:
 			// 	'url("https://picsum.photos/960/336/?grayscale&blur") no-repeat top right',
 			// backgroundSize: `${theme.spacing(120)}px ${theme.spacing(42)}px`,
-			[theme.breakpoints.down("sm")]: {
-				height: 360 /*"720px"*/,
+			[theme.breakpoints.down("xs")]: {
+				height: 480 /*360*/ /*"720px"*/,
 			},
 		},
-		profileCover: {
+		profileCoverWrapper: {
 			width: "100%",
+			display: "flex",
+			flexDirection: "column",
+			alignItems: "center",
+			/*[theme.breakpoints.down('xs')]: {
+				display: "unset",
+			}*/
+		},
+		profileCover: {
+			width: 960,
 			height: 336,
 			// background: `url("${profileCoverURL}") no-repeat top right`,
 			// backgroundSize: `${theme.spacing(120)}px ${theme.spacing(42)}px`,
 			// backgroundPosition: "center",
 			position: "absolute",
 			zIndex: 0,
-			[theme.breakpoints.down("sm")]: {
-				height: 128,
+			[theme.breakpoints.down("xs")]: {
+				width: 600 /*365.7142857*/,
+				height: 228.5714286 /*128*/,
 			},
 		},
 		coverSkeleton: {
@@ -71,8 +81,8 @@ const useStyles = (profileColor, matchesSM) =>
 			opacity: 1,
 			width: "100%",
 			height: 336,
-			[theme.breakpoints.down("sm")]: {
-				height: 128,
+			[theme.breakpoints.down("xs")]: {
+				height: 228.5714286 /*128*/,
 			},
 		},
 		profileInfo: {
@@ -82,8 +92,8 @@ const useStyles = (profileColor, matchesSM) =>
 			zIndex: 2,
 			width: "100%",
 			height: "100%",
-			[theme.breakpoints.down("sm")]: {
-				top: "136px",
+			[theme.breakpoints.down("xs")]: {
+				top: 240 /*136*/,
 				flexDirection: "column",
 				alignItems: "center",
 				left: 0,
@@ -112,23 +122,23 @@ const useStyles = (profileColor, matchesSM) =>
 			// Invert
 			left: "88px",
 			transform: "scale(4.5)",
-			[theme.breakpoints.down("sm")]: {
+			[theme.breakpoints.down("xs")]: {
 				transform: "scale(3.5)",
 				left: 0,
 			},
 			zIndex: 1,
 		},
 		nameWrapper: {
-			width: "226px",
-			height: "42px",
+			width: 226,
+			height: 42,
 			background: "rgba(0,0,0, 0.5)",
 			position: "absolute",
-			left: "212px",
-			bottom: "6px",
-			borderRadius: "12px",
+			left: 212,
+			bottom: 6,
+			borderRadius: 4,
 
 			// Invert
-			[theme.breakpoints.down("sm")]: {
+			[theme.breakpoints.down("xs")]: {
 				display: "none",
 			},
 		},
@@ -137,7 +147,7 @@ const useStyles = (profileColor, matchesSM) =>
 			position: "absolute",
 			top: 0,
 			color: /*"transparent"*/ matchesSM && "#ffebee",
-			[theme.breakpoints.down("sm")]: {
+			[theme.breakpoints.down("xs")]: {
 				left: "unset",
 				height: "unset",
 				// color: "#000",
@@ -165,6 +175,8 @@ function Profile({
 	user,
 	getAuthProfile,
 }) {
+	const profileCoverURL = "https://picsum.photos/960/336/";
+
 	const matchesSM = useMediaQuery("(min-width: 600px)");
 	const classes = useStyles(profileColor, matchesSM)();
 
@@ -186,7 +198,8 @@ function Profile({
 		<Container
 			className={classes.container}
 			maxWidth="md"
-			fixed /*disableGutters*/
+			fixed
+			disableGutters={matchesSM}
 		>
 			<Paper elevation={3} className={classes.profileMain}>
 				{!coverLoaded && (
@@ -196,19 +209,22 @@ function Profile({
 							className={classes.coverSkeleton}
 							variant="rect"
 							width="100%"
-							height={!matchesSM ? 128 : 336}
+							height={!matchesSM ? 228.5714286 : 336}
 						/>
 					</>
 				)}
-				<img
-					src={profileCoverURL}
-					className={classes.profileCover}
-					onLoad={() => setCoverLoaded(true)}
-				/>
+				<Box className={classes.profileCoverWrapper}>
+					<img
+						src={profileCoverURL}
+						className={classes.profileCover}
+						onLoad={() => setCoverLoaded(true)}
+					/>
+				</Box>
 				<Container
 					disableGutters
 					className={classes.profileCover}
-					style={{ zIndex: 2 }} // For img element BG
+					// For img element BG and to override width
+					style={{ zIndex: 2, width: !matchesSM && "100%" }}
 					// onLoad={() => setCoverLoaded(true)}
 				>
 					<Box component="span" className={classes.profileInfo}>
