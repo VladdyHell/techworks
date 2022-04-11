@@ -12,7 +12,14 @@ import {
   Container,
   responsiveFontSizes,
 } from "@material-ui/core";
-import { yellow, green, pink, blue, white, red } from "@material-ui/core/colors";
+import {
+  yellow,
+  green,
+  pink,
+  blue,
+  white,
+  red,
+} from "@material-ui/core/colors";
 
 // Pages
 import LandingPage, { navHeight } from "./pages/LandingPage";
@@ -31,6 +38,10 @@ import PrivateRoute from "./components/layouts/PrivateRoute";
 import LoadingScreen from "./components/layouts/LoadingScreen";
 // import CreateProfile from "./pages/CreateProfile";
 
+// Components
+import ProfileInfo from "./components/profile/ProfileInfo";
+import ProfileAbout from './components/profile/ProfileAbout';
+
 // Redux
 // import { configureStore as store } from "./store";
 import { connect } from "react-redux";
@@ -48,13 +59,13 @@ let theme = createTheme({
       black: "#1B262C",
     },
     primary: {
-      main: blue[500]/*"#3282B8"*/,
+      main: blue[500] /*"#3282B8"*/,
       // light: "#BBE1FA",
       // dark: "#0F4C75",
     },
     // secondary: "#BBE1FA",
     secondary: {
-      main: red[500]/*"#B86832"*/,
+      main: red[500] /*"#B86832"*/,
       // light: "#FAD4BB",
       // dark: "#75380F",
     },
@@ -124,10 +135,23 @@ function App({ authorize, authorizing, isAuthenticated }) {
           <Route path="/auth/:page" element={<AuthPage />} />
           <Route path="/home" element={<PrivateRoute component={NewsFeed} />} />
           <Route
-            path="/profile/me/"
+            path="/profile/me"
             element={<PrivateRoute component={Profile} />}
-          />{/*
+          >
             <Route
+              path=""
+              element={<PrivateRoute component={ProfileInfo} />}
+            />
+            <Route
+              path="about"
+              element={<PrivateRoute component={ProfileAbout} />}
+            />
+            <Route
+              path="photos"
+              element={<h1>Photos</h1>}
+            />
+          </Route>
+          {/*<Route
               path="create"
               element={<PrivateRoute component={CreateProfile} />}
             />

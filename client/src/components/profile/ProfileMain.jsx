@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { useLocation } from "react-router-dom";
 
 // Redux
 import { connect } from "react-redux";
@@ -14,9 +13,20 @@ import {
 	Paper,
 	Box,
 	useMediaQuery,
+	AppBar,
+	Tabs,
+	Tab,
 } from "@material-ui/core";
 import Skeleton from "@material-ui/lab/Skeleton";
 import { yellow, green, pink, orange, white } from "@material-ui/core/colors";
+import ProfileMainInfo from "./ProfileMain.Info";
+
+// Router
+import {
+	useNavigate,
+	useParams,
+	useLocation /*Outlet*/,
+} from "react-router-dom";
 
 const useStyles = (profileColor, matchesSM) =>
 	makeStyles((theme) => ({
@@ -70,99 +80,81 @@ const useStyles = (profileColor, matchesSM) =>
 				height: 228.5714286 /*128*/,
 			},
 		},
-		profileInfo: {
-			display: "flex",
-			position: "absolute",
-			alignItems: "end",
-			zIndex: 2,
-			width: "100%",
-			height: "100%",
+
+		// Appbar
+		appbarRoot: {
+			width: "unset",
+			bottom: 0,
+			top: "unset",
+			height: 64,
+			justifyContent: "center",
+			background: "unset",
+			color: "#000",
+			boxShadow: "unset",
+			zIndex: 0,
 			[theme.breakpoints.down("xs")]: {
-				top: 240 /*136*/,
-				flexDirection: "column",
+				width: "100%",
 				alignItems: "center",
-				left: 0,
-				right: 0,
-				height: "120px",
-				justifyContent: "space-between",
 			},
 		},
-		avatar: {
-			// marginLeft: theme.spacing(3),
-			backgroundColor: (profileColor) => {
-				const profileColors = [yellow[700], green[500], pink[500], orange[500]];
-				return (
-					// Math.floor(Math.random() * profileColors.length)
-					profileColors[localStorage.profileBG]
-				);
-			},
-			// width: "180px",
-			// height: "180px",
-			position: "relative",
-			bottom: "36px",
-
-			// Invert
-			left: "88px",
-			transform: "scale(4.5)",
-			[theme.breakpoints.down("xs")]: {
-				transform: "scale(3.5)",
-				left: 0,
-			},
-			zIndex: 1,
-		},
-		nameWrapper: {
-			width: 226,
-			height: 42,
-			background: "rgba(0,0,0, 0.5)",
-			position: "absolute",
-			left: 212,
-			bottom: 6,
-			borderRadius: 4,
-
-			// Invert
-			[theme.breakpoints.down("xs")]: {
-				display: "none",
-			},
-		},
-		profileName: {
-			fontSize: "32px",
-			position: "absolute",
-			top: 0,
-			color: /*"transparent"*/ matchesSM && "#ffebee",
-			[theme.breakpoints.down("xs")]: {
-				left: "unset",
-				height: "unset",
-				// color: "#000",
-				top: "unset",
-				bottom: "-2px",
-				paddingLeft: "unset",
-				position: "relative",
-				width: "unset;",
-			},
+		tabs: {
 			width: "100%",
-			height: "336px",
-			// backgroundImage: `url("${profileCoverURL}")`,
-			top: 0,
-			// backgroundClip: "text",
-			// filter: "invert(100%) contrast(4)",
-			display: "flex",
-			alignItems: "end",
-			paddingLeft: "224px",
+		},
+		tabsFlex: {
+			justifyContent: "space-around",
+		},
+		tabItem: {
+			minHeight: 64,
+			paddingTop: 0,
+			paddingBottom: 0,
 		},
 	}));
 
-function ProfileMain({user, profileColor}) {
+function ProfileMain({ user, profileColor }) {
 	const profileCoverURL = "https://picsum.photos/960/336/";
 
 	const matchesSM = useMediaQuery("(min-width: 600px)");
 	const classes = useStyles(profileColor, matchesSM)();
 
-	const { pathname } = useLocation();
-	const editProfilePath = pathname.split("/")[3];
-
 	const [coverLoaded, setCoverLoaded] = useState(false);
 
 	// setInterval(()=>{console.log(coverLoaded);}, 5000)
+
+	const navigate = useNavigate();
+	// const { page } = useParams();
+	const { pathname } = useLocation();
+
+	const editProfilePath = pathname.split("/")[3];
+
+	const tabNameToIndex = {
+		0: "",
+		1: "about",
+		2: "photos",
+	};
+
+	const indexToTabName = {
+		main: 0,
+		about: 1,
+		photos: 2,
+	};
+
+	const [selectedTab, setSelectedTab] = useState(() =>
+		editProfilePath ? indexToTabName[editProfilePath] : indexToTabName["main"]
+	);
+
+	const handleChange = (e, newVal) => {
+		console.log(indexToTabName[""]);
+		if (tabNameToIndex[newVal] != "")
+			navigate(`/profile/me/${tabNameToIndex[newVal]}`);
+		else navigate(`/profile/me`);
+		setSelectedTab(newVal);
+	};
+
+	useEffect(() => {
+		setSelectedTab(() =>
+			editProfilePath ? indexToTabName[editProfilePath] : indexToTabName["main"]
+		);
+	}, [pathname]);
 
 	return (
 		<Paper elevation={3} className={classes.profileMain}>
@@ -191,16 +183,20 @@ function ProfileMain({user, profileColor}) {
 				style={{ zIndex: 2, width: !matchesSM && "100%" }}
 				// onLoad={() => setCoverLoaded(true)}
 			>
-				<Box component="span" className={classes.profileInfo}>
-					<Avatar className={classes.avatar}>
-						{user.firstName[0].toUpperCase()}
-					</Avatar>
-					<span className={classes.nameWrapper}></span>
-					<Typography variant="h6" className={classes.profileName}>
-						{user.firstName} {user.lastName}
-					</Typography>
-				</Box>
+				<ProfileMainInfo user={user} />
 			</Container>
+			<AppBar position="absolute" classes={{ root: classes.appbarRoot }}>
+				<Tabs
+					value={selectedTab}
+					onChange={handleChange}
+					classes={{ flexContainer: classes.tabsFlex }}
+					className={classes.tabs}
+				>
+					<Tab label="Main" classes={{ root: classes.tabItem }} />
+					<Tab label="About" classes={{ root: classes.tabItem }} />
+					<Tab label="Photos" classes={{ root: classes.tabItem }} />
+				</Tabs>
+			</AppBar>
 		</Paper>
 	);
 }

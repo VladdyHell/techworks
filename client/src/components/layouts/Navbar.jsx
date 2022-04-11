@@ -27,6 +27,11 @@ const useStyles = makeStyles((theme) => ({
     color: "unset",
     textDecoration: "none",
   },
+  iconButton: {
+    [theme.breakpoints.down("xs")]: {
+      padding: 8,
+    },
+  },
   avatar: {
     // marginLeft: theme.spacing(3),
     backgroundColor: () => {
@@ -74,7 +79,10 @@ function Navbar({ isLoading, isAuthenticated, logout, user }) {
             </Link>
           ) : (
             <div>
-              <IconButton onClick={() => navigate("/profile/me")}>
+              <IconButton
+                onClick={() => navigate("/profile/me")}
+                classes={{ root: classes.iconButton }}
+              >
                 {/*<AccountCircle color="secondary" fontSize="large" className={classes.avatar} />;*/}
                 <Avatar className={classes.avatar}>
                   {user && user.firstName[0].toUpperCase()}

@@ -29,6 +29,9 @@ const useStyles = makeStyles((theme) => ({
 	cardRoot: {
 		marginTop: theme.spacing(2.5),
 	},
+	cardContent: {
+		minHeight: 136,
+	},
 }));
 
 function ProfileCard({ field }) {
@@ -146,7 +149,7 @@ function ProfileCard({ field }) {
 	return (
 		<Card className={classes.cardRoot}>
 			<CardHeader
-				title={capitalize(field.title)}
+				title={<Typography variant="h6">{capitalize(field.title)}</Typography>}
 				avatar={
 					field.icon && (
 						<Avatar style={{ backgroundColor: field.backgroundColor }}>
@@ -155,7 +158,7 @@ function ProfileCard({ field }) {
 					)
 				}
 			/>
-			<CardContent>
+			<CardContent className={classes.cardContent}>
 				<Typography
 					variant="body2"
 					// ref={bioRef}

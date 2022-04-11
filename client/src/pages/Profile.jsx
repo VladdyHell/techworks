@@ -1,24 +1,24 @@
 import React, { useEffect } from "react";
 import PropTypes from "prop-types";
-import { Outlet } from "react-router-dom";
+import {
+	useLocation,
+	useParams,
+	Outlet,
+	useOutletContext,
+} from "react-router-dom";
 
 // Redux
 import { connect } from "react-redux";
 import { getAuthProfile } from "../thunks/profile";
 
 // MUI
-import {
-	makeStyles,
-	Container,
-	Grid,
-	useMediaQuery,
-} from "@material-ui/core";
+import { makeStyles, Container, Grid, useMediaQuery } from "@material-ui/core";
 
 // Components
 // import ProfileLayout from "../components/layouts/ProfileLayout";
 // import ProfileCreateCTA from "../components/profile/ProfileCreateCTA";
 import ProfileInfo from "../components/profile/ProfileInfo";
-import ProfileMain from '../components/profile/ProfileMain';
+import ProfileMain from "../components/profile/ProfileMain";
 
 const useStyles = (profileColor, matchesSM) =>
 	makeStyles((theme) => ({
@@ -44,9 +44,14 @@ function Profile({
 	const matchesSM = useMediaQuery("(min-width: 600px)");
 	const classes = useStyles(matchesSM)();
 
+	const { page } = useParams;
+	const { pathname } = useLocation();
+	const editProfilePath = pathname.split("/")[3];
+
 	useEffect(() => {
 		getAuthProfile();
 		// console.log("PROFILE: ", profile);
+		console.log(editProfilePath);
 	}, []);
 
 	return loading && !userProfile ? (
@@ -63,8 +68,8 @@ function Profile({
 				{/*Left Column*/}
 				<Grid item xs={12} md={4}>
 					{/*<ProfileStatus userProfile={userProfile} />*/}
-					<ProfileInfo profile={profile} />
-					{/*<Outlet />*/}
+					{/*{!editProfilePath && <ProfileInfo profile={profile} />}*/}
+					<Outlet context={{ profile }} />
 				</Grid>
 			</Grid>
 		</Container>
