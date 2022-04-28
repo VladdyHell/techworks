@@ -13,7 +13,7 @@ import { Visibility, VisibilityOff /*Lock;*/ } from "@material-ui/icons";
 const useStyles = makeStyles((theme) => ({
 	field: {
 		marginTop: theme.spacing(1),
-		marginBottom: theme.spacing(2),
+		marginBottom: theme.spacing(1),
 		// display: "block",
 		width: "100%",
 	},

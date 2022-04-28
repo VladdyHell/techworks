@@ -1,5 +1,5 @@
 // Ecosystem
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { hot } from "react-hot-loader";
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
@@ -7,10 +7,12 @@ import "./App.css";
 // MUI
 import {
   createTheme,
+  useTheme,
   ThemeProvider,
   makeStyles,
   Container,
   responsiveFontSizes,
+  CssBaseline,
 } from "@material-ui/core";
 import {
   yellow,
@@ -40,7 +42,7 @@ import LoadingScreen from "./components/layouts/LoadingScreen";
 
 // Components
 import ProfileInfo from "./components/profile/ProfileInfo";
-import ProfileAbout from './components/profile/ProfileAbout';
+import ProfileAbout from "./components/profile/ProfileAbout";
 
 // Redux
 // import { configureStore as store } from "./store";
@@ -53,34 +55,6 @@ import setAuthToken from "./utils/setAuthToken";
 
 export const totalHeroShrink = navHeight + footerPadding + footerFontSize;
 
-let theme = createTheme({
-  palette: {
-    common: {
-      black: "#1B262C",
-    },
-    primary: {
-      main: blue[500] /*"#3282B8"*/,
-      // light: "#BBE1FA",
-      // dark: "#0F4C75",
-    },
-    // secondary: "#BBE1FA",
-    secondary: {
-      main: red[500] /*"#B86832"*/,
-      // light: "#FAD4BB",
-      // dark: "#75380F",
-    },
-  },
-  typography: {
-    fontFamily: "Quicksand",
-    fontWeightLight: 400,
-    fontWeightRegular: 500,
-    fontWeightMedium: 600,
-    fontWeightBold: 700,
-  },
-});
-
-theme = responsiveFontSizes(theme);
-
 const useStyles = makeStyles((theme) => ({
   baseContainer: {
     minHeight: `calc(100vh - ${theme.spacing(totalHeroShrink)}px)`,
@@ -89,7 +63,46 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function App({ authorize, authorizing, isAuthenticated }) {
+  let theme = useTheme()
   const classes = useStyles();
+
+  const [isDarkMode, setIsDarkMode] = useState(eval(localStorage.isDarkMode));
+
+  theme = createTheme({
+    palette: {
+      type: isDarkMode ? "dark" : "light",
+      common: {
+        // dark mode color attempt
+        // black: "#1B262C",
+      },
+      primary: {
+        main: blue[500],
+        // main: !isDarkMode ? blue[500] : "#333" /*"#3282B8"*/,
+        // light: "#BBE1FA",
+        // dark: "#0F4C75",
+      },
+      // secondary: "#BBE1FA",
+      secondary: {
+        main: red[500] /*"#B86832"*/,
+        // light: "#FAD4BB",
+        // dark: "#75380F",
+      },
+      background: {
+        default: !isDarkMode
+          ? theme.palette.background.default
+          : theme.palette.grey[900],
+      },
+    },
+    typography: {
+      fontFamily: "Quicksand",
+      fontWeightLight: 400,
+      fontWeightRegular: 500,
+      fontWeightMedium: 600,
+      fontWeightBold: 700,
+    },
+  });
+
+  theme = responsiveFontSizes(theme);
 
   useEffect(() => {
     if (localStorage.token) {
@@ -105,13 +118,18 @@ function App({ authorize, authorizing, isAuthenticated }) {
     if (!localStorage.profileBG) {
       localStorage.setItem("profileBG", Math.floor(Math.random() * 4));
     }
+
+    if (!localStorage.isDarkMode) {
+      localStorage.setItem("isDarkMode", true);
+    }
   }, []);
 
   return authorizing ? (
     <LoadingScreen />
   ) : (
     <ThemeProvider theme={theme}>
-      <Navbar />
+      <CssBaseline />
+      <Navbar isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
       <Container className={classes.baseContainer} disableGutters>
         <Routes>
           <Route
@@ -138,18 +156,12 @@ function App({ authorize, authorizing, isAuthenticated }) {
             path="/profile/me"
             element={<PrivateRoute component={Profile} />}
           >
-            <Route
-              path=""
-              element={<PrivateRoute component={ProfileInfo} />}
-            />
+            <Route path="" element={<PrivateRoute component={ProfileInfo} />} />
             <Route
               path="about"
               element={<PrivateRoute component={ProfileAbout} />}
             />
-            <Route
-              path="photos"
-              element={<h1>Photos</h1>}
-            />
+            <Route path="photos" element={<h1>Photos</h1>} />
           </Route>
           {/*<Route
               path="create"

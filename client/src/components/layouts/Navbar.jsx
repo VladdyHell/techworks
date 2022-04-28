@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 import {
+  useTheme,
   AppBar,
   Toolbar,
   Button,
@@ -14,7 +16,7 @@ import { yellow, green, pink, orange } from "@material-ui/core/colors";
 import { connect } from "react-redux";
 import { auth } from "../../reducers/auth";
 import { logout } from "../../actions/auth";
-import PropTypes from "prop-types";
+import { DarkModeToggle } from "react-dark-mode-toggle-2";
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -34,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
   },
   avatar: {
     // marginLeft: theme.spacing(3),
+    color: theme.palette.grey[50],
     backgroundColor: () => {
       const profileColors = [yellow[700], green[500], pink[500], orange[500]];
       return (
@@ -46,14 +49,23 @@ const useStyles = makeStyles((theme) => ({
     color: "unset",
     textDecoration: "none",
   },
+  rightItems: { display: "flex", alignItems: "center" },
 }));
 
-function Navbar({ isLoading, isAuthenticated, logout, user }) {
+function Navbar({
+  isDarkMode,
+  setIsDarkMode,
+  isLoading,
+  isAuthenticated,
+  logout,
+  user,
+}) {
   const location = useLocation();
   const { pathname } = location;
   const navigate = useNavigate();
   console.log(pathname);
 
+  const theme = useTheme();
   const classes = useStyles();
 
   const handleLogout = () => {
@@ -61,8 +73,32 @@ function Navbar({ isLoading, isAuthenticated, logout, user }) {
     navigate("/auth/signin");
   };
 
+  const DarkModeToggler = (
+    <DarkModeToggle
+      onChange={(bool) => {
+        localStorage.setItem("isDarkMode", bool);
+        setIsDarkMode(bool);
+        false && console.log(localStorage.isDarkMode);
+      }}
+      isDarkMode={isDarkMode}
+      size={64}
+    />
+  );
+
+  const isDarkModeLS = eval(localStorage.isDarkMode);
+  useEffect(() => {
+    localStorage.setItem("isDarkMode", isDarkModeLS);
+    setIsDarkMode(isDarkModeLS);
+  }, [isDarkModeLS]);
+
   return (
-    <AppBar position="fixed">
+    <AppBar
+      position="fixed"
+      color="primary"
+      style={{
+        background: eval(localStorage.isDarkMode) && theme.palette.grey["A400"],
+      }}
+    >
       <Toolbar className={classes.toolbar}>
         <Link to="/" className={classes.logo}>
           <BlurCircular />
@@ -72,13 +108,17 @@ function Navbar({ isLoading, isAuthenticated, logout, user }) {
         </Link>
         {pathname != "/auth/signin" || pathname != "/auth/signup" ? (
           !isAuthenticated ? (
-            <Link to="auth/signin" role="button" className={classes.link}>
-              <Button variant="text" color="inherit">
-                Sign In
-              </Button>
-            </Link>
+            <div className={classes.rightItems}>
+              {DarkModeToggler}
+              <Link to="auth/signin" role="button" className={classes.link}>
+                <Button variant="text" color="inherit">
+                  Sign In
+                </Button>
+              </Link>
+            </div>
           ) : (
-            <div>
+            <div className={classes.rightItems}>
+              {DarkModeToggler}
               <IconButton
                 onClick={() => navigate("/profile/me")}
                 classes={{ root: classes.iconButton }}

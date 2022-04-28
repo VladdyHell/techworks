@@ -4,6 +4,7 @@ import PostsDAO from "../../dao/postsDAO.js";
 import { check, validationResult } from "express-validator";
 // import config from "config";
 import CustomError from "../../../lib/error.js";
+import Professions from "../../../data/Professions.json";
 
 export default class ProfileCtrl {
   static async apiGetAuthProfile(req, res) {
@@ -49,11 +50,16 @@ export default class ProfileCtrl {
         instagram,
         linkedin,
         skills,
+        status,
         ...profileFields
       } = req.body;
 
       if (skills) {
         profileFields.skills = skills.split(",").map((skill) => skill.trim());
+      }
+
+      if (status) {
+        profileFields.status = status.split(",").map((statusItem) => statusItem.trim());
       }
 
       const socialFields = { youtube, facebook, instagram, linkedin };
@@ -268,6 +274,22 @@ export default class ProfileCtrl {
       res.json(reposRes);
     } catch (e) {
       res.status(e.response.status).json(e);
+    }
+  }
+
+  static async apiGetProfessions(req, res) {
+    try {
+      const professionsRes = await Professions.JobTitles.filter(({ title }) =>
+        title.toLowerCase().trim().includes(req.query.query)
+      );
+
+      if (professionsRes.length == 0)
+        throw new CustomError("404", "Professions Not Found");
+
+      res.json(professionsRes);
+    } catch (e) {
+      if (e.kind == "404") return res.status(e.kind).json(e);
+      res.status(500).json({ msg: "Server Error", error: e.toString() });
     }
   }
 }

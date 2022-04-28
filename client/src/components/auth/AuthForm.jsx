@@ -7,7 +7,14 @@ import {
 } from "react-router-dom";
 import RegisterForm from "./register/Form";
 import LoginForm from "./login/Login";
-import { makeStyles, Container, Tabs, Tab, AppBar } from "@material-ui/core";
+import {
+	useTheme,
+	makeStyles,
+	Container,
+	Tabs,
+	Tab,
+	AppBar,
+} from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
 	formContainer: {
@@ -17,8 +24,8 @@ const useStyles = makeStyles((theme) => ({
 		justifyContent: "center",
 		alignItems: "center",
 		[theme.breakpoints.down("sm")]: {
-			paddingTop: theme.spacing(9),
-			paddingBottom: theme.spacing(4),
+			paddingTop: theme.spacing(12/*9*/),
+			paddingBottom: theme.spacing(7/*4*/),
 		},
 	},
 	appbarRoot: {
@@ -35,7 +42,8 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-const AuthForm = () => {
+function AuthForm() {
+	const theme = useTheme();
 	const classes = useStyles();
 
 	const navigate = useNavigate();
@@ -73,6 +81,11 @@ const AuthForm = () => {
 			<AppBar
 				position="absolute"
 				// color="secondary"
+				color="primary"
+				style={{
+					background:
+						eval(localStorage.isDarkMode) && theme.palette.grey["A400"],
+				}}
 				classes={{ root: classes.appbarRoot }}
 			>
 				<Tabs
@@ -101,6 +114,6 @@ const AuthForm = () => {
 			{selectedTab === 1 || authPath == "signin" ? <LoginForm /> : null}
 		</Container>
 	);
-};
+}
 
 export default AuthForm;

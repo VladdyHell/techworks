@@ -40,7 +40,8 @@ const useStyles = makeStyles((theme) => ({
 		display: "flex",
 		justifyContent: "center",
 		alignItems: "center",
-		backgroundColor: "#2196f3",
+		backgroundColor: (isDarkMode) =>
+			!isDarkMode ? theme.palette.primary.main : theme.palette.grey["A400"],
 		backgroundImage:
 			"url(https://www.transparenttextures.com/patterns/batthern.png)",
 	},
@@ -56,7 +57,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AuthPage = ({ isAuthenticated }) => {
-	const classes = useStyles();
+	const isDarkMode = eval(localStorage.isDarkMode);
+	const classes = useStyles(isDarkMode);
 
 	if (isAuthenticated) {
 		return <Navigate to="/home" />;

@@ -74,4 +74,9 @@ router
 // @access	Public
 router.get("/github/:username", ProfileCtrl.apiGetUserGHRepos);
 
+// @route   GET api/v1/profile/professions
+// @desc    Get professions title list
+// @access  Public
+router.get('/professions', ProfileCtrl.apiGetProfessions)
+
 export default router;

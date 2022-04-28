@@ -72,7 +72,9 @@ const useStyles = (profileColor, matchesSM) =>
 		coverSkeletonBG: {
 			position: "absolute",
 			zIndex: 1,
-			backgroundColor: "#FFF",
+			backgroundColor: !eval(localStorage.isDarkMode)
+				? theme.palette.common.white
+				: theme.palette.grey[800],
 			opacity: 1,
 			width: "100%",
 			height: 336,
@@ -191,6 +193,7 @@ function ProfileMain({ user, profileColor }) {
 					onChange={handleChange}
 					classes={{ flexContainer: classes.tabsFlex }}
 					className={classes.tabs}
+					textColor="primary"
 				>
 					<Tab label="Main" classes={{ root: classes.tabItem }} />
 					<Tab label="About" classes={{ root: classes.tabItem }} />

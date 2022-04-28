@@ -47,6 +47,9 @@ const useStyles = (loading) =>
 		circle: {
 			strokeLinecap: "round",
 		},
+		submitButton: {
+			marginTop: theme.spacing(1)
+		},
 	}));
 
 function Login({ formError, setFormError, authLoading, login }) {
@@ -170,6 +173,7 @@ function Login({ formError, setFormError, authLoading, login }) {
 					color="secondary"
 					disabled={authLoading}
 					fullWidth
+					className={classes.submitButton}
 				>
 					Sign In
 				</Button>

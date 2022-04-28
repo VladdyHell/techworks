@@ -9,10 +9,10 @@ import {
 
 // Redux
 import { connect } from "react-redux";
-import { getAuthProfile } from "../thunks/profile";
+import { getAuthProfile, getProfessionsTitle } from "../thunks/profile";
 
 // MUI
-import { makeStyles, Container, Grid, useMediaQuery } from "@material-ui/core";
+import { makeStyles, Container, useMediaQuery } from "@material-ui/core";
 
 // Components
 // import ProfileLayout from "../components/layouts/ProfileLayout";
@@ -40,6 +40,7 @@ function Profile({
 	profile: { userProfile, loading },
 	user,
 	getAuthProfile,
+	professions,
 }) {
 	const matchesSM = useMediaQuery("(min-width: 600px)");
 	const classes = useStyles(matchesSM)();
@@ -51,7 +52,6 @@ function Profile({
 	useEffect(() => {
 		getAuthProfile();
 		// console.log("PROFILE: ", profile);
-		console.log(editProfilePath);
 	}, []);
 
 	return loading && !userProfile ? (
@@ -62,16 +62,12 @@ function Profile({
 			maxWidth="md"
 			fixed
 			disableGutters={matchesSM}
+			style={{ paddingTop: matchesSM ? 16 : null }}
 		>
 			<ProfileMain />
-			<Grid container className={classes.profileGrid}>
-				{/*Left Column*/}
-				<Grid item xs={12} md={4}>
-					{/*<ProfileStatus userProfile={userProfile} />*/}
-					{/*{!editProfilePath && <ProfileInfo profile={profile} />}*/}
-					<Outlet context={{ profile }} />
-				</Grid>
-			</Grid>
+			{/*<ProfileStatus userProfile={userProfile} />*/}
+			{/*{!editProfilePath && <ProfileInfo profile={profile} />}*/}
+			<Outlet context={{ profile }} />
 		</Container>
 	);
 }
@@ -79,10 +75,12 @@ function Profile({
 Profile.propTypes = {
 	getAuthProfile: PropTypes.func.isRequired,
 	profile: PropTypes.object.isRequired,
+	professions: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
 	profile: state.profile,
+	professions: state.profile.professions,
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -8,6 +8,7 @@ import {
   Button,
 } from "@material-ui/core";
 import { totalHeroShrink } from "../App";
+import ParticlesBackground from "../components/layouts/ParticlesBackground";
 
 export const navHeight = 8; // 4 // 12
 
@@ -18,9 +19,11 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     alignItems: "center",
     minHeight: `calc(100vh - ${theme.spacing(totalHeroShrink)}px)`,
+    // background: theme.palette.background.default
   },
   contentContainer: {
     textAlign: "center",
+    zIndex: 0,
   },
   ctaBtnContainer: {
     display: "flex",
@@ -36,18 +39,19 @@ function LandingPage() {
 
   return (
     <Container className={classes.container}>
+      <ParticlesBackground />
       <div className={classes.contentContainer}>
         <Typography variant="h3" component="h2">
           Welcome to TechWorks
         </Typography>
         <Typography variant="h6">A Social Networking for Developers</Typography>
         <ButtonGroup className={classes.ctaBtnContainer}>
-          <Link to="auth/signup">
-            <Button color="primary" variant="contained">
+          <Link to="auth/signup" style={{ textDecoration: "none" }}>
+            <Button color="secondary" variant="contained">
               Sign Up
             </Button>
           </Link>
-          <Link to="auth/signin">
+          <Link to="auth/signin" style={{ textDecoration: "none" }}>
             <Button variant="outlined">Sign In</Button>
           </Link>
         </ButtonGroup>

@@ -38,6 +38,7 @@ const useStyles = (matchesSM) =>
 		},
 		avatar: {
 			// marginLeft: theme.spacing(3),
+			color: theme.palette.grey[50],
 			backgroundColor: () => {
 				const profileColors = [yellow[700], green[500], pink[500], orange[500]];
 				return (
@@ -100,8 +101,7 @@ const useStyles = (matchesSM) =>
 		},
 	}));
 
-function ProfileMainInfo({user}) {
-
+function ProfileMainInfo({ user }) {
 	const matchesSM = useMediaQuery("(min-width: 600px)");
 	const classes = useStyles(matchesSM)();
 
@@ -111,7 +111,11 @@ function ProfileMainInfo({user}) {
 				{user.firstName[0].toUpperCase()}
 			</Avatar>
 			<span className={classes.nameWrapper}></span>
-			<Typography variant="h6" className={classes.profileName}>
+			<Typography
+				variant="h6"
+				color="textPrimary"
+				className={classes.profileName}
+			>
 				{user.firstName} {user.lastName}
 			</Typography>
 		</Box>

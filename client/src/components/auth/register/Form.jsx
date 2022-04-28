@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
 	makeStyles,
+	useMediaQuery,
 	TextField,
 	Grid,
 	Button,
@@ -51,10 +52,14 @@ const useStyles = (loading) =>
 		circle: {
 			strokeLinecap: "round",
 		},
+		submitButton: {
+			marginTop: theme.spacing(1)
+		},
 	}));
 
 function Form({ formError, setFormError, authLoading, signup }) {
 	const classes = useStyles(authLoading)();
+	const matchesSM = useMediaQuery("(min-width: 600px)");
 
 	const [formData, setFormData] = useState({
 		firstName: "",
@@ -247,7 +252,7 @@ function Form({ formError, setFormError, authLoading, signup }) {
 						),
 					}}
 				/>
-				<Grid container spacing={2}>
+				<Grid container spacing={matchesSM ? 2 : null}>
 					<Grid item md={6} sm={12} xs={12}>
 						{/*<TextField
 							className={classes.field}
@@ -300,6 +305,7 @@ function Form({ formError, setFormError, authLoading, signup }) {
 					color="secondary"
 					disabled={authLoading}
 					fullWidth
+					className={classes.submitButton}
 				>
 					Sign Up
 				</Button>

@@ -1,6 +1,10 @@
 import React from "react";
+import PropTypes from 'prop-types'
+
+// Components
 import ProfileCard from "./ProfileCard";
 
+// MUI
 import {
 	LocationOn,
 	Description,
@@ -11,8 +15,31 @@ import {
 	CastForEducation,
 } from "@material-ui/icons";
 import { blue, green, pink, orange, yellow } from "@material-ui/core/colors";
+import { Grid, makeStyles } from "@material-ui/core";
 
-function ProfileInfo({ profile }) {
+// router
+import { useOutletContext } from "react-router-dom";
+
+// redux
+import { connect } from "react-redux";
+import { getProfessionsTitle } from "../../thunks/profile";
+import { getProfessionsSuccess } from "../../actions/profile";
+
+const useStyles = makeStyles((theme) => ({
+	profileGrid: {
+		// marginTop: theme.spacing(2.5),
+	},
+}));
+
+function ProfileInfo({
+	professions,
+	getProfessionsTitle,
+	getProfessionsSuccess,
+}) {
+	const { profile } = useOutletContext();
+
+	const classes = useStyles();
+
 	const fields = [
 		{
 			title: "bio",
@@ -20,44 +47,47 @@ function ProfileInfo({ profile }) {
 			backgroundColor: blue[500],
 		},
 		{
-			title: "location",
-			icon: <LocationOn />,
-			backgroundColor: green[500],
-		},
-		{
 			title: "status",
 			icon: <Work />,
 			backgroundColor: pink[500],
+			isTags: true,
 		},
 		{
 			title: "company",
 			icon: <Business />,
 			backgroundColor: orange[500],
 		},
-		{
-			title: "website",
-			icon: <Language />,
-			backgroundColor: yellow[700],
-		},
-		{
-			title: "skills",
-			icon: <CastForEducation />,
-			backgroundColor: blue[500],
-		},
-		{
-			title: "githubusername",
-			icon: <GitHub />,
-			backgroundColor: green[500],
-		},
 	];
 
 	return (
-		<>
-			{fields.map((field, i) => (
-				<ProfileCard key={i} field={field} />
-			))}
-		</>
+		<Grid container className={classes.profileGrid}>
+			{/*Left Column*/}
+			<Grid item xs={12} md={4}>
+				{fields.map((field, i) => (
+					<ProfileCard
+						key={i}
+						field={field}
+						topic={profile.professions}
+						getXThunk={getProfessionsTitle}
+						getXSuccessAction={getProfessionsSuccess}
+					/>
+				))}
+			</Grid>
+		</Grid>
 	);
 }
 
-export default ProfileInfo;
+ProfileInfo.propTypes = {
+	professions: PropTypes.object.isRequired,
+	getProfessionsTitle: PropTypes.func.isRequired,
+	getProfessionsSuccess: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+	professions: state.profile.professions,
+});
+
+export default connect(mapStateToProps, {
+	getProfessionsTitle,
+	getProfessionsSuccess,
+})(ProfileInfo);
