@@ -34,12 +34,17 @@ export const profile = (state = initialState, action) => {
 				...state,
 				userProfile: payload.profile,
 				loading: false,
+
+				error: {},
 			};
 		}
 		case GET_PROFILE_IN_PROGRESS: {
 			return {
 				...state,
 				loading: true,
+
+				error: {},
+				userProfile: null,
 			};
 		}
 		case GET_PROFILE_FAILURE: {

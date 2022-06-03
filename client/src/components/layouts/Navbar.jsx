@@ -80,7 +80,7 @@ function Navbar({
         setIsDarkMode(bool);
         false && console.log(localStorage.isDarkMode);
       }}
-      isDarkMode={isDarkMode}
+      isDarkMode={eval(localStorage.isDarkMode)}
       size={64}
     />
   );

@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { useLocation } from "react-router-dom";
 
 // Redux
@@ -17,7 +18,7 @@ import {
 import Skeleton from "@material-ui/lab/Skeleton";
 import { yellow, green, pink, orange, white } from "@material-ui/core/colors";
 
-const useStyles = (matchesSM) =>
+const useStyles = (matchesSM, profileLoading) =>
 	makeStyles((theme) => ({
 		profileMainInfo: {
 			display: "flex",
@@ -43,7 +44,7 @@ const useStyles = (matchesSM) =>
 				const profileColors = [yellow[700], green[500], pink[500], orange[500]];
 				return (
 					// Math.floor(Math.random() * profileColors.length)
-					profileColors[localStorage.profileBG]
+					!profileLoading && profileColors[localStorage.profileBG]
 				);
 			},
 			// width: "180px",
@@ -101,25 +102,55 @@ const useStyles = (matchesSM) =>
 		},
 	}));
 
-function ProfileMainInfo({ user }) {
+function ProfileMainInfo({ user, profileLoading }) {
 	const matchesSM = useMediaQuery("(min-width: 600px)");
-	const classes = useStyles(matchesSM)();
+	const classes = useStyles(matchesSM, profileLoading)();
 
 	return (
 		<Box component="span" className={classes.profileMainInfo}>
-			<Avatar className={classes.avatar}>
-				{user.firstName[0].toUpperCase()}
-			</Avatar>
-			<span className={classes.nameWrapper}></span>
-			<Typography
-				variant="h6"
-				color="textPrimary"
-				className={classes.profileName}
-			>
-				{user.firstName} {user.lastName}
-			</Typography>
+			{profileLoading ? (
+				<Box className={classes.avatar}>
+					<Skeleton animation="wave" variant="circle">
+						<Avatar />
+					</Skeleton>
+				</Box>
+			) : (
+				<Avatar className={classes.avatar}>
+					{user.firstName[0].toUpperCase()}
+				</Avatar>
+			)}
+			{profileLoading ? (
+				<>
+					<Skeleton animation="wave">
+						<span className={classes.nameWrapper}></span>
+						<Typography
+							variant="h6"
+							color="textPrimary"
+							className={classes.profileName}
+						>
+							{user.firstName} {user.lastName}
+						</Typography>
+					</Skeleton>
+				</>
+			) : (
+				<>
+					<span className={classes.nameWrapper}></span>
+					<Typography
+						variant="h6"
+						color="textPrimary"
+						className={classes.profileName}
+					>
+						{user.firstName} {user.lastName}
+					</Typography>
+				</>
+			)}
 		</Box>
 	);
 }
+
+ProfileMainInfo.propTypes = {
+	user: PropTypes.object.isRequired,
+	profileLoading: PropTypes.bool.isRequired,
+};
 
 export default ProfileMainInfo;

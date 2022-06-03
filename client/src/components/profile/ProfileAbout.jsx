@@ -72,12 +72,6 @@ function ProfileAbout({
 			backgroundColor: yellow[700],
 		},
 		{
-			title: "skills",
-			icon: <CastForEducation />,
-			backgroundColor: blue[500],
-			isTags: true,
-		},
-		{
 			title: "githubusername",
 			icon: <GitHub />,
 			backgroundColor: green[500],

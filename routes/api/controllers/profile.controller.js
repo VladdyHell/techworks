@@ -40,7 +40,9 @@ export default class ProfileCtrl {
     try {
       const errors = validationResult(req);
 
-      if (!errors.isEmpty())
+      const profileExists = await ProfileDAO.getAuthProfile(req.user.id);
+
+      if (!errors.isEmpty() && !/status|skills/.test(profileExists))
         throw new CustomError("400", "Validation Error", errors.array());
 
       const {
@@ -55,23 +57,47 @@ export default class ProfileCtrl {
       } = req.body;
 
       if (skills) {
-        profileFields.skills = skills.split(",").map((skill) => skill.trim());
+        profileFields.skills = skills /*.split(",")*/
+          .map((skill) => skill.trim());
       }
 
       if (status) {
-        profileFields.status = status.split(",").map((statusItem) => statusItem.trim());
+        profileFields.status = status /*.split(",")*/
+          .map((statusItem) => statusItem.trim());
       }
 
-      const socialFields = { youtube, facebook, instagram, linkedin };
+      const socialFields = { youtube, twitter, facebook, instagram, linkedin };
+
+      false && console.log(socialFields);
 
       profileFields.social = { ...socialFields };
 
+      const finalProfileFields = {
+        ...profileFields,
+        social: Object.entries(profileFields.social).some(
+          ([key, value]) => value != undefined
+        )
+          ? Object.fromEntries(
+              Object.entries(profileFields.social).filter(
+                ([key, value]) => value != undefined || value != null
+              )
+            )
+          : null,
+      };
+
+      false && console.log(finalProfileFields);
+
+      !finalProfileFields.social && delete finalProfileFields.social;
+
+      false && console.log(finalProfileFields);
+
       const profile = await ProfileDAO.createUpdateUserProfile(
         req.user.id,
-        profileFields
+        finalProfileFields
       );
       res.json(profile);
     } catch (e) {
+      if (e.kind == "400") return res.status(e.kind).json(e);
       res.status(500).json({ msg: "Server Error", error: e.toString() });
     }
   }

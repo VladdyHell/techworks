@@ -41,3 +41,21 @@ export const getProfessionsTitle = (query) => async (dispatch) => {
 		dispatch(getProfessionsFailure(e.response.data));
 	}
 };
+
+export const createUpdateUserProfile =
+	(formData, /*navigate,*/ edit = false) => (dispatch) => {
+		return new Promise(async (resolve, reject) => {
+			try {
+				dispatch(getProfileInProgress());
+				const res = await http.put("/profile", formData);
+				alert(edit ? "Profile Updated" : "Profile Created");
+
+				dispatch(getProfileSuccess(res.data));
+				resolve(res);
+			} catch (e) {
+				console.log("err: ", e);
+				dispatch(getProfileFailure(e.response.data));
+				reject(e.response.data);
+			}
+		});
+	};

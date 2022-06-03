@@ -38,19 +38,20 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-function ProfileCard({ field, topic, getXThunk, getXSuccessAction }) {
+function ProfileCard({
+	fields,
+	profile,
+	topic,
+	getXThunk,
+	getXSuccessAction,
+	initialDefaults,
+	initialState,
+	formData,
+	setFormData,
+	handleSubmit,
+}) {
 	const theme = useTheme();
 	const classes = useStyles();
-
-	const initialState = {
-		company: "Insert your company name here",
-		website: "Insert your website link here",
-		location: "Insert your location here",
-		status: { set: [], textField: "Insert your status here" },
-		skills: { set: [], textField: "Insert your skills here" },
-		bio: "Insert your bio here",
-		githubusername: "Insert your GitHub username here",
-	};
 
 	const [disabledEditable, toggleEditable] = useReducer(
 		(disabledEditable, action) => {
@@ -76,7 +77,6 @@ function ProfileCard({ field, topic, getXThunk, getXSuccessAction }) {
 	const bioRef = useRef();
 	const githubusernameRef = useRef();
 
-	const [formData, setFormData] = useState(initialState);
 	const [prevVal, setPrevVal] = useState({
 		company: null,
 		website: null,
@@ -124,14 +124,53 @@ function ProfileCard({ field, topic, getXThunk, getXSuccessAction }) {
 		DEBUG && console.log(`PrevChar: ${prevChar}`);
 	}, [prevChar]);
 
-	const handleClick = (e) => {
-		const operationName = new FormData(e.target).get("operation");
+	const handleClick = (name, value) => {
+		// const operationName = new FormData(e.target).get("operation");
+		const operationName = value;
 		DEBUG && console.log(operationName);
 		setHandleClickName(operationName);
 		if (operationName.split("-")[0] == "edit") {
-			setPrevVal({ ...prevVal, [e.target.name]: formData[e.target.name] });
+			setPrevVal({ ...prevVal, [name]: formData[name] });
 		}
 	};
+
+	const trimmedFormData = Object.fromEntries(Object.entries(formData)
+			/*.filter(
+				([key, value]) =>
+					(typeof value == "string" &&
+						// value != initialDefaults[key] &&
+						value != "" &&
+						value != "<br>") ||
+					// value?.textField != initialState[key]?.textField
+					(typeof value == "object" &&
+						// value?.set &&
+						value?.set?.length != 0)
+			)*/
+			.map(([key, value]) => {
+				const isStr = typeof value == "string";
+				const trimmedStr = isStr && value?.replace(/&nbsp;|<br>/gi, " ").trim();
+	
+				false &&
+					console.log(
+						`${key}: `,
+						"value - ",
+						isStr ? trimmedStr : "Obj",
+						"- empty - ",
+						isStr ? /^$/.test(trimmedStr) : "Obj."
+					);
+	
+				return isStr
+					? value.trim() == initialDefaults[key] ||
+					  // /^$|<br>|&nbsp/.test(value?.trim())
+					  /^$/.test(trimmedStr)
+						? [key, null]
+						: [key, trimmedStr]
+					: typeof value == "object" && value?.set?.length == 0
+					? [key, []]
+					: [key, value];
+			}));
+	false && console.log("Trimmed formData: ", trimmedFormData);
+	// handleSubmit(trimmedFormData);
 
 	useEffect(() => {
 		DEBUG &&
@@ -150,14 +189,14 @@ function ProfileCard({ field, topic, getXThunk, getXSuccessAction }) {
 		DEBUG && console.log(operationName, fieldName, refName);
 
 		DEBUG && console.log(!disabledEditable[fieldName]);
-		if (!disabledEditable[fieldName]) {
+		if (!disabledEditable[fieldName] && operationName == "edit") {
 			DEBUG &&
 				console.log(
-					formData[fieldName] == initialState[fieldName],
+					formData[fieldName] == initialDefaults[fieldName],
 					typeof formData[fieldName] == "object",
 					formData[fieldName]?.textField == initialState[fieldName]?.textField
 				);
-			if (formData[fieldName] == initialState[fieldName]) {
+			if (formData[fieldName] == initialDefaults[fieldName]) {
 				setFormData({ ...formData, [fieldName]: "" });
 			} else if (
 				typeof formData[fieldName] == "object" &&
@@ -174,7 +213,7 @@ function ProfileCard({ field, topic, getXThunk, getXSuccessAction }) {
 		} else if (disabledEditable[fieldName] && operationName == "close") {
 			DEBUG && console.log(!refName.current.defaultValue?.trim() == "");
 			if (refName.current.textContent.trim() == "" && !prevVal[fieldName]) {
-				setFormData({ ...formData, [fieldName]: initialState[fieldName] });
+				setFormData({ ...formData, [fieldName]: initialDefaults[fieldName] });
 			} else if (
 				refName.current.defaultValue?.trim() != "" &&
 				!prevVal[fieldName]
@@ -183,7 +222,7 @@ function ProfileCard({ field, topic, getXThunk, getXSuccessAction }) {
 					...formData,
 					[fieldName]: {
 						...initialState[fieldName],
-						textField: initialState[fieldName].textField,
+						textField: initialState[fieldName]?.textField,
 					},
 				});
 			} else {
@@ -195,23 +234,25 @@ function ProfileCard({ field, topic, getXThunk, getXSuccessAction }) {
 		) {
 			if (
 				typeof formData[fieldName] == "string" &&
-				refName.current.textContent.trim() == ""
+				(refName.current.textContent.trim() == "" ||
+					refName.current.textContent.trim() == "<br>")
 			) {
-				setFormData({ ...formData, [fieldName]: initialState[fieldName] });
+				setFormData({ ...formData, [fieldName]: initialDefaults[fieldName] });
 			} else if (
-				typeof formData[fieldName] == "object"/* &&
+				typeof formData[fieldName] == "object" /* &&
 				refName.current.defaultValue?.trim() == ""*/
 			) {
 				setFormData({
 					...formData,
 					[fieldName]: {
 						...formData[fieldName],
-						textField: initialState[fieldName].textField,
+						textField: initialState[fieldName]?.textField,
 					},
 				});
 			} else {
-				setFormData(formData);
+				setFormData(trimmedFormData);
 			}
+			false && console.log("Form Data PC UE:", formData);
 		}
 	}, [disabledEditable]);
 
@@ -222,81 +263,84 @@ function ProfileCard({ field, topic, getXThunk, getXSuccessAction }) {
 		name: "operation",
 	};
 
-	const tagsEditable = {
-		name: field.title,
-		// value: formData[field.title],
-		ref: eval(`${field.title}Ref`),
-		// onChange: handleChange,
-		disabled: disabledEditable[field.title],
-		// style: {
-		// 	wordWrap: "break-word",
-		// },
-		setFormData: setFormData,
-		formData: formData,
-		setPrevChar: setPrevChar,
-	};
+	return fields.map((field, i) => {
+		const tagsEditable = {
+			name: field.title,
+			// value: formData[field.title],
+			ref: eval(`${field.title}Ref`),
+			// onChange: handleChange,
+			disabled: disabledEditable[field.title],
+			// style: {
+			// 	wordWrap: "break-word",
+			// },
+			setFormData: setFormData,
+			formData: formData,
+			setPrevChar: setPrevChar,
+		};
 
-	return (
-		<Card className={classes.cardRoot}>
-			<CardHeader
-				title={<Typography variant="h6">{capitalize(field.title)}</Typography>}
-				avatar={
-					field.icon && (
-						<Avatar
-							style={{
-								backgroundColor: field.backgroundColor,
-								color: theme.palette.grey[50],
-							}}
+		return (
+			<Card key={i} className={classes.cardRoot}>
+				<CardHeader
+					title={
+						<Typography variant="h6">{capitalize(field.title)}</Typography>
+					}
+					avatar={
+						field.icon && (
+							<Avatar
+								style={{
+									backgroundColor: field.backgroundColor,
+									color: theme.palette.grey[50],
+								}}
+							>
+								{field.icon}
+							</Avatar>
+						)
+					}
+				/>
+				<CardContent className={classes.cardContent}>
+					{!field.isTags ? (
+						<Typography
+							variant="body2"
+							// ref={bioRef}
+							// contentEditable={editableField}
+							// suppressContentEditableWarning={true}
+							// onInput={handleChange}
 						>
-							{field.icon}
-						</Avatar>
-					)
-				}
-			/>
-			<CardContent className={classes.cardContent}>
-				{!field.isTags ? (
-					<Typography
-						variant="body2"
-						// ref={bioRef}
-						// contentEditable={editableField}
-						// suppressContentEditableWarning={true}
-						// onInput={handleChange}
-					>
-						<ContentEditable
-							name={field.title}
-							html={formData[field.title]}
-							innerRef={eval(`${field.title}Ref`)}
-							onChange={handleChange}
-							disabled={disabledEditable[field.title]}
-							style={{
-								minHeight:
-									!disabledEditable[field.title] &&
-									formData[field.title] == "" &&
-									"20px",
-								border:
-									!disabledEditable[field.title] && `1px solid ${grey[500]}`,
-								wordWrap: "break-word",
-							}}
+							<ContentEditable
+								name={field.title}
+								html={formData[field.title]}
+								innerRef={eval(`${field.title}Ref`)}
+								onChange={handleChange}
+								disabled={disabledEditable[field.title]}
+								style={{
+									minHeight:
+										!disabledEditable[field.title] &&
+										formData[field.title] == "" &&
+										"20px",
+									border:
+										!disabledEditable[field.title] && `1px solid ${grey[500]}`,
+									wordWrap: "break-word",
+								}}
+							/>
+						</Typography>
+					) : (
+						<ProfileCardTags
+							subject={capitalize(field.title)}
+							setValue={formData[field.title].set}
+							textFieldValue={formData[field.title].textField}
+							handleChange={handleChange}
+							prevChar={prevChar}
+							topic={topic}
+							getXThunk={getXThunk}
+							getXSuccessAction={getXSuccessAction}
+							tagsEditable={tagsEditable}
 						/>
-					</Typography>
-				) : (
-					<ProfileCardTags
-						subject={capitalize(field.title)}
-						setValue={formData[field.title].set}
-						textFieldValue={formData[field.title].textField}
-						handleChange={handleChange}
-						prevChar={prevChar}
-						topic={topic}
-						getXThunk={getXThunk}
-						getXSuccessAction={getXSuccessAction}
-						tagsEditable={tagsEditable}
-					/>
-				)}
-				{/*{bioRef.current.textContent}</Typography>*/}
-			</CardContent>
-			<CardActions>
-				{disabledEditable[field.title] ? (
-					<form
+					)}
+					{/*{bioRef.current.textContent}</Typography>*/}
+				</CardContent>
+				<CardActions>
+					{disabledEditable[field.title] ? (
+						/*<form
 						name={field.title}
 						onSubmit={(e) => {
 							toggleEditable({ type: field.title });
@@ -304,14 +348,20 @@ function ProfileCard({ field, topic, getXThunk, getXSuccessAction }) {
 							handleClick(e);
 						}}
 					>
-						<input {...CRUInputConfig} value={`edit-${field.title}`} />
-						<IconButton type="submit" color="secondary">
-							<Edit />
-						</IconButton>
-					</form>
-				) : (
-					<>
-						<form
+						<input {...CRUInputConfig} value={`edit-${field.title}`} />*/
+						<IconButton
+							// type="submit"
+							color="secondary"
+							onClick={(e) => {
+								toggleEditable({ type: field.title });
+								handleClick(field.title, `edit-${field.title}`);
+							}}
+							children={<Edit />}
+						/>
+					) : (
+						// </form>
+						<>
+							{/*<form
 							name={field.title}
 							onSubmit={(e) => {
 								toggleEditable({ type: field.title });
@@ -319,36 +369,59 @@ function ProfileCard({ field, topic, getXThunk, getXSuccessAction }) {
 								handleClick(e);
 							}}
 						>
-							<input {...CRUInputConfig} value={`close-${field.title}`} />
-							<IconButton type="submit" color="secondary">
-								<Close />
-							</IconButton>
-						</form>
-						<form
+							<input {...CRUInputConfig} value={`close-${field.title}`} />*/}
+							<IconButton
+								// type="submit"
+								color="secondary"
+								onClick={(e) => {
+									toggleEditable({ type: field.title });
+									handleClick(field.title, `close-${field.title}`);
+								}}
+								children={<Close />}
+							/>
+							{/*</form>*/}
+							{/*<form
 							name={field.title}
 							onSubmit={(e) => {
 								toggleEditable({ type: field.title });
 								e.preventDefault();
 								handleClick(e);
+								handleSubmit(formData);
 							}}
 						>
-							<input {...CRUInputConfig} value={`submit-${field.title}`} />
-							<IconButton type="submit" color="secondary">
-								<Check />
-							</IconButton>
-						</form>
-					</>
-				)}
-			</CardActions>
-		</Card>
-	);
+							<input {...CRUInputConfig} value={`submit-${field.title}`} />*/}
+							<IconButton
+								// type="submit"
+								color="secondary"
+								onClick={(e) => {
+									toggleEditable({ type: field.title });
+									handleClick(field.title, `submit-${field.title}`);
+
+									DEBUG && console.log(formData);
+
+									handleSubmit(trimmedFormData);
+								}}
+								children={<Check />}
+							/>
+							{/*</form>*/}
+						</>
+					)}
+				</CardActions>
+			</Card>
+		);
+	});
 }
 
 ProfileCard.propTypes = {
-	field: PropTypes.object.isRequired,
+	fields: PropTypes.array.isRequired,
 	topic: PropTypes.object.isRequired,
 	getXThunk: PropTypes.func.isRequired,
 	getXSuccessAction: PropTypes.func.isRequired,
+	initialDefaults: PropTypes.object.isRequired,
+	initialState: PropTypes.object.isRequired,
+	formData: PropTypes.object.isRequired,
+	setFormData: PropTypes.func.isRequired,
+	handleSubmit: PropTypes.func.isRequired,
 };
 
 export default ProfileCard;

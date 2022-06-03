@@ -107,7 +107,8 @@ export const auth = (state = initialAuthState, action) => {
 		case LOGIN_ERROR:
 		case LOGOUT: {
 			payload && console.error("Err:", payload.err);
-			localStorage.removeItem("token");
+			localStorage.removeItem("token")
+			localStorage.removeItem("profile")
 			return {
 				...state,
 				token: null,

@@ -54,9 +54,9 @@ function Profile({
 		// console.log("PROFILE: ", profile);
 	}, []);
 
-	return loading && !userProfile ? (
+	/*return loading && !userProfile ? (
 		<h1>Loading Profile...</h1>
-	) : (
+	) :*/ return (
 		<Container
 			className={classes.container}
 			maxWidth="md"

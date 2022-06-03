@@ -29,7 +29,7 @@ import AuthPage from "./pages/AuthPage";
 import NewsFeed from "./pages/NewsFeed";
 import Profile from "./pages/Profile";
 
-// Pages
+// Layouts
 import Navbar from "./components/layouts/Navbar";
 // import LoginPage from "./pages/LoginPage";
 import Footer, {
@@ -43,6 +43,9 @@ import LoadingScreen from "./components/layouts/LoadingScreen";
 // Components
 import ProfileInfo from "./components/profile/ProfileInfo";
 import ProfileAbout from "./components/profile/ProfileAbout";
+
+// External Components
+import { ToastContainer } from "react-toastify";
 
 // Redux
 // import { configureStore as store } from "./store";
@@ -115,11 +118,11 @@ function App({ authorize, authorizing, isAuthenticated }) {
       if (!localStorage.token) store.dispatch({ type: LOGOUT });
     });
 
-    if (!localStorage.profileBG) {
+    if (!eval(localStorage.profileBG)) {
       localStorage.setItem("profileBG", Math.floor(Math.random() * 4));
     }
 
-    if (!localStorage.isDarkMode) {
+    if (!eval(localStorage.isDarkMode)) {
       localStorage.setItem("isDarkMode", true);
     }
   }, []);
@@ -129,6 +132,7 @@ function App({ authorize, authorizing, isAuthenticated }) {
   ) : (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <ToastContainer />
       <Navbar isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
       <Container className={classes.baseContainer} disableGutters>
         <Routes>

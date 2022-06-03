@@ -112,7 +112,7 @@ const useStyles = (profileColor, matchesSM) =>
 		},
 	}));
 
-function ProfileMain({ user, profileColor }) {
+function ProfileMain({ user, profileColor, profileLoading }) {
 	const profileCoverURL = "https://picsum.photos/960/336/";
 
 	const matchesSM = useMediaQuery("(min-width: 600px)");
@@ -160,10 +160,11 @@ function ProfileMain({ user, profileColor }) {
 
 	return (
 		<Paper elevation={3} className={classes.profileMain}>
-			{!coverLoaded && (
+			{(!coverLoaded || profileLoading) && (
 				<>
 					<div className={classes.coverSkeletonBG}></div>
 					<Skeleton
+						animation="wave"
 						className={classes.coverSkeleton}
 						variant="rect"
 						width="100%"
@@ -185,7 +186,7 @@ function ProfileMain({ user, profileColor }) {
 				style={{ zIndex: 2, width: !matchesSM && "100%" }}
 				// onLoad={() => setCoverLoaded(true)}
 			>
-				<ProfileMainInfo user={user} />
+				<ProfileMainInfo user={user} profileLoading={profileLoading} />
 			</Container>
 			<AppBar position="absolute" classes={{ root: classes.appbarRoot }}>
 				<Tabs
@@ -206,11 +207,14 @@ function ProfileMain({ user, profileColor }) {
 
 ProfileMain.propTypes = {
 	user: PropTypes.object.isRequired,
+	profileColor: PropTypes.number.isRequired,
+	profileLoading: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state) => ({
 	user: state.auth.user,
 	profileColor: state.profile.profileColor,
+	profileLoading: state.profile.loading,
 });
 
 export default connect(mapStateToProps)(ProfileMain);

@@ -160,6 +160,7 @@ function ProfileCardTags({
 			onClose={() => {
 				setOpen(false);
 			}}
+			onFocus={() => setOpen(true)}
 			value={formData[tagsEditable.name].set}
 			onChange={handleTagsChange}
 			renderTags={(value, getTagProps) =>

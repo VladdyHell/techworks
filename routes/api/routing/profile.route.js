@@ -16,7 +16,7 @@ router
   // @access   Public
   .get(ProfileCtrl.apiGetAllProfiles)
 
-  // @route  POST api/v1/profile
+  // @route  PUT api/v1/profile
   // @desc	 Create or update user profile
   // @access Private
   .put(
